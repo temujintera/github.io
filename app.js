@@ -51,16 +51,22 @@ const SCREEN=[
   p:'Featured as the greyhound in the Ladbrokes TV commercial starring Mark Wahlberg.'},
  {t:'CC’s',k:'Hero',logo:'logo-ccs-white.png',video:'video-ccs.mp4',poster:'video-ccs.jpg',
   p:'The hero of the CC’s TV commercial for Snackbrands: the packet, the chip burst and all the close-ups.'},
- {t:'I’m A Celebrity…',k:'Dancer',poster:'video-screen2.jpg',video:'video-screen2.mp4',
-  p:'Dancer in the TV commercial for I’m A Celebrity… Get Me Out Of Here!, ITV Studios for Channel 10.'}];
+ {t:'I’m A Celebrity…',k:'Dancer',poster:'video-imaceleb.jpg',video:'video-imaceleb.mp4',
+  p:'Dancer in the TV commercial for I’m A Celebrity… Get Me Out Of Here!, ITV Studios for Channel 10: the red-carpet kicks, the eyeball-fork circle from above and the lawn line.'},
+ {t:'H&R Block',k:'Hero',poster:'video-hrb.jpg',video:'video-hrb.mp4',
+  p:'The hero of H&R Block’s File Free student TV commercial: the library, the late-night tax question and the iPad.'},
+ {t:'KFC',k:'Featured extra',poster:'video-kfc.jpg',video:'video-kfc.mp4',
+  p:'In the KFC “New Girl” TV commercial: that’s me in the back of the crowd in the sombrero, and again in the final shot.'}];
 const REEL=[
  {src:'hosh3',t:'Sydney Harbour',s:'West Side Story · 2024',w:1},
  {src:'bernardo',t:'Bernardo',s:'Footage: @sydneyweekender'},
  {src:'tour-mambo2',t:'The tour',s:'Media call · as Pepe'},
  {src:'celeb-dance',t:'Broken Strings',s:'Celebrity Solstice',w:1},
+ {src:'hrb',t:'H&R Block',s:'TVC · Hero',w:1},
  {src:'paramount',t:'Paramount',s:'Presenter'},
  {src:'ccs',t:'CC’s',s:'TVC · Hero'},
- {src:'screen2',t:'On screen',s:'Commercials & presenting',w:1},
+ {src:'imaceleb',t:'I’m A Celebrity…',s:'TVC · Dancer',w:1},
+ {src:'kfc',t:'KFC',s:'TVC · Featured extra',w:1},
  {src:'ladbrokes2',t:'Ladbrokes',s:'TVC with Mark Wahlberg',w:1}];
 const CREDITS=[
  ['West Side Story — Handa Opera on Sydney Harbour','Moose · u/s Bernardo','Opera Australia · 2024','Stage'],
@@ -81,7 +87,8 @@ const CREDITS=[
  ['I’m A Celebrity… Get Me Out Of Here! TVC','Dancer','ITV Studios · Channel 10','Screen'],
  ['Pieces of Her','Club dancer','Netflix','Screen'],
  ['H&R Block TVC','Hero','H&R Block','Screen'],
- ['Dulux, KFC, Toyota and more','TVCs','Various','Screen'],
+ ['KFC “New Girl” TVC','Featured extra','KFC','Screen'],
+ ['Dulux, Toyota and more','TVCs','Various','Screen'],
  ['Certificate IV in Theatre and Screen','Graduate','ACTT','Training'],
  ['Certificate IV in Dance','Graduate','Village Nation (Village on Broadway)','Training'],
  ['Diploma of Musical Theatre','Graduate','Village Nation (Village on Broadway)','Training']];
