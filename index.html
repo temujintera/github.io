@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Temujin Tera · Performer</title>
+<meta name="description" content="Temujin Tera — singer, dancer, actor and presenter. West Side Story on Sydney Harbour, Royal Caribbean, Celebrity Cruises, Universal Studios Singapore, Paramount and TV commercials.">
+<meta property="og:title" content="Temujin Tera · Performer">
+<meta property="og:description" content="Singer, dancer, actor and presenter. Stage, screen and sea.">
+<meta property="og:image" content="img-portrait.jpg">
+<link rel="icon" href="img-portrait.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="progress"></div>
+<nav class="top" id="nav">
+  <a class="brand" href="#top">TEMUJIN<span>.</span>TERA</a>
+  <button class="burger" id="burger" aria-label="Menu">☰</button>
+  <div class="links" id="links">
+    <a href="#about">About</a><a href="#reel">Reel</a><a href="#stage">Stage</a><a href="#sea">At sea</a><a href="#screen">Screen</a><a href="#credits">Credits</a><a href="#training">Training</a><a href="#contact">Contact</a>
+  </div>
+</nav>
+
+<header class="hero" id="top">
+  <video autoplay muted loop playsinline poster="video-hosh3.jpg"><source src="video-hosh3.mp4" type="video-mp4"></video>
+  <div class="spot" id="spot"></div>
+  <div class="wrap">
+    <div class="eyebrow">Performer · Sydney, Australia</div>
+    <h1 class="disp">Temujin<br><span class="r">Tera</span></h1>
+    <div class="roles">Stage, screen &amp; sea — <b id="role">Singer</b></div>
+    <div class="hero-cta">
+      <a class="btn red" href="#reel">▶ Watch the reel</a>
+      <a class="btn" href="#credits">All credits</a>
+      <a class="btn" href="#contact">Book me</a>
+    </div>
+  </div>
+  <div class="scroll-cue">Scroll</div>
+</header>
+
+<div class="wrap">
+  <div class="stats rv">
+    <div class="stat"><div class="n"><span data-count="2">0</span></div><div class="l">West Side Story productions with Opera Australia</div></div>
+    <div class="stat"><div class="n"><span data-count="6">0</span></div><div class="l">Cruise ship contracts, Royal Caribbean &amp; Celebrity</div></div>
+    <div class="stat"><div class="n"><span data-count="9">0</span><i>+</i></div><div class="l">Screen credits: TVCs, Netflix &amp; presenting</div></div>
+    <div class="stat"><div class="n"><span data-count="3">0</span></div><div class="l">Qualifications in theatre, screen &amp; dance</div></div>
+  </div>
+</div>
+
+<div class="marquee" aria-hidden="true"><div class="track" id="track"></div></div>
+
+<section id="about">
+  <div class="wrap about">
+    <div class="pic rv"><img src="img-portrait.jpg" alt="Temujin Tera portrait"><div class="tag">Singer · Dancer · Actor · Presenter</div></div>
+    <div class="rv">
+      <div class="eyebrow">About me</div>
+      <h2 class="disp" style="font-size:clamp(48px,7vw,92px);margin-top:10px">A performer<br>first.</h2>
+      <p class="lead">I've performed for <em>theme parks</em>, <em>cruise lines</em>, <em>Paramount</em> and on <em>Sydney Harbour</em> — singing, dancing, acting and presenting.</p>
+      <p class="mute">From playing Bernardo in West Side Story on an international tour, to the floating stage of Handa Opera on Sydney Harbour, to production shows across the world's oceans with Royal Caribbean and Celebrity Cruises. On screen, I've presented for Paramount and been the hero of TV commercials. Everything here comes with the proof: the photos, the footage and the shows.</p>
+      <div class="chips"><span class="chip">🎤 Singer</span><span class="chip">💃 Dancer</span><span class="chip">🎭 Actor</span><span class="chip">🎙️ Presenter</span><span class="chip">📍 Sydney</span></div>
+      <div class="trio">
+        <button data-lb="about" data-src="img-stage.jpg" data-cap="On stage"><img src="img-stage.jpg" alt="On stage" loading="lazy"></button>
+        <button data-lb="about" data-src="img-red-costume.jpg" data-cap="In costume"><img src="img-red-costume.jpg" alt="In costume" loading="lazy"></button>
+        <button data-lb="about" data-src="img-event.jpg" data-cap="Performing at an event"><img src="img-event.jpg" alt="Performing at an event" loading="lazy"></button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="reel" style="padding-top:40px">
+  <div class="wrap">
+    <div class="sec-head rv"><div><div class="eyebrow">Hover · tap to watch</div><h2 class="disp">The reel</h2></div><img class="fig" src="fig-jazz-tech.png" alt=""><div class="idx">01</div></div>
+    <div class="reel" id="reelGrid"></div>
+  </div>
+</section>
+
+<section id="stage">
+  <div class="wrap">
+    <div class="sec-head rv"><div><div class="eyebrow">Theatre &amp; theme parks</div><h2 class="disp">On stage</h2></div><img class="fig red" src="fig-musical-theatre.png" alt=""><div class="idx">02</div></div>
+    <div class="tabs rv" id="tabs"></div>
+    <div id="chapters"></div>
+    <div class="also rv"><b>Also on stage:</b> The Original Grease — Kenickie (Squabbalogic) · Bring It On: The Musical, Sydney &amp; Queensland — Cameron (Supply Evolution).</div>
+  </div>
+</section>
+
+<section id="sea" style="padding-top:0">
+  <div class="wrap">
+    <div class="ships rv">
+      <div class="wave">⚓</div>
+      <div class="top"><div><div class="eyebrow">Production shows at sea</div><h3 class="disp">Royal Caribbean</h3></div><img class="rci" src="logo-royal-caribbean.svg" alt="Royal Caribbean International"></div>
+      <p class="mute" style="max-width:640px;margin-top:12px">Five contracts as a principal singer in Royal Caribbean's production casts — tap a ship to see the shows.</p>
+      <div class="voyage" id="voyage"></div>
+    </div>
+  </div>
+</section>
+
+<section id="screen">
+  <div class="wrap">
+    <div class="sec-head rv"><div><div class="eyebrow">TV commercials &amp; presenting</div><h2 class="disp">On screen</h2></div><img class="fig" src="fig-hip-hop.png" alt=""><div class="idx">03</div></div>
+    <div class="screen-grid" id="screenGrid"></div>
+    <div class="also rv"><b>Also on screen:</b> Netflix, <i>Pieces of Her</i> (club dancer) · H&amp;R Block TVC (hero) · Dulux, KFC, Toyota and more.</div>
+  </div>
+</section>
+
+<section id="credits">
+  <div class="wrap">
+    <div class="sec-head rv"><div><div class="eyebrow">Everything, in one place</div><h2 class="disp">Credits</h2></div><img class="fig red" src="fig-intro-model-pose.png" alt=""><div class="idx">04</div></div>
+    <div class="ctools rv">
+      <div class="tabs" id="cfilter" style="margin:0"></div>
+      <input id="csearch" type="search" placeholder="Search a show, role or company…" aria-label="Search credits">
+    </div>
+    <div class="ctable rv" id="ctable"></div>
+  </div>
+</section>
+
+<section id="training" style="padding-top:20px">
+  <div class="wrap">
+    <div class="sec-head rv"><div><div class="eyebrow">Where it started</div><h2 class="disp">Training</h2></div><div class="idx">05</div></div>
+    <div class="train">
+      <div class="tcard rv"><img src="logo-actt.png" alt="ACTT"><div class="lv">Certificate IV</div><h4>Theatre &amp; Screen</h4><p class="mute">Actors College of Theatre and Television (ACTT)</p></div>
+      <div class="tcard rv"><img src="logo-village-nation-white.png" alt="Village Nation"><div class="lv">Certificate IV</div><h4>Dance</h4><p class="mute">Village Nation (Village on Broadway)</p></div>
+      <div class="tcard rv"><img src="logo-village-nation-white.png" alt="Village Nation"><div class="lv">Diploma</div><h4>Musical Theatre</h4><p class="mute">Village Nation (Village on Broadway)</p></div>
+    </div>
+    <div class="train-figs"><img class="fig" src="fig-ballet.png" alt=""><img class="fig red" src="fig-tap.png" alt="" style="animation-delay:-1.5s"><img class="fig" src="fig-jazz-tech.png" alt="" style="animation-delay:-3s"></div>
+  </div>
+</section>
+
+<section id="contact" style="padding-top:20px">
+  <div class="wrap">
+    <div class="contact rv">
+      <img class="bg" src="img-hosh-fireworks.jpg" alt=""><img class="fig" src="fig-partnering.png" alt="">
+      <div class="eyebrow" style="color:#fff">Castings · bookings · events</div>
+      <h2 class="disp">Let's make<br>a show.</h2>
+      <p>For auditions, castings, contracts and appearances, get in touch — CV, headshots and full showreel on request.</p>
+      <a class="btn" href="mailto:temujin.tera@gmail.com?subject=Booking%20enquiry">✉ temujin.tera@gmail.com</a><button class="copy" id="copy">copy email</button>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap foot">
+    <div>© <span id="yr"></span> Temujin Tera · Performer</div>
+    <a class="shm" href="https://www.shmittyshmedia.com" target="_blank" rel="noopener"><img src="logo-shmitty-shmedia-white.png" alt="Shmitty ShMEDIA logo"><span><small>Also behind the camera</small><b>Shmitty ShMEDIA</b></span></a>
+  </div>
+</footer>
+
+<div class="lb" id="lb" role="dialog" aria-modal="true">
+  <div class="count" id="lbCount"></div>
+  <button class="x" id="lbX" aria-label="Close">✕</button>
+  <button class="nv p" id="lbP" aria-label="Previous">‹</button>
+  <div class="stagebox" id="lbBox"></div>
+  <div class="cap" id="lbCap"></div>
+  <button class="nv n" id="lbN" aria-label="Next">›</button>
+</div>
+<div class="toast" id="toast">Email copied</div>
+<script src="app.js"></script>
+</body>
+</html>
