@@ -1,6 +1,16 @@
 const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
 const isTouch=matchMedia('(hover:none)').matches;
 const CHAPTERS=[
+ {id:'tour',tab:'Bernardo · West Side Story Tour',year:'2019–21',logo:'logo-wss-tour-black.png',inv:1,title:'West Side Story',
+  roles:['Bernardo','Pepe · u/s Bernardo'],co:'Australia & New Zealand International Tour · GWB, Opera Australia',
+  video:'video-tour-mambo2.mp4',poster:'video-tour-mambo2.jpg',vcap:'Media call, as Pepe',
+  text:'The international tour across Australia and New Zealand. I joined in 2019 as Pepe, understudying Bernardo, and in 2021 I took on Bernardo himself, leading the Sharks.',
+  facts:[['2021','Bernardo'],['2019','Pepe, u/s Bernardo'],['Territory','Australia & New Zealand'],['Producers','GWB, Opera Australia']],
+  media:[
+   {src:'img-tour-sharks.jpg',cap:'With my Sharks in “Tonight”'},
+   {src:'img-tour-tonight.jpg',cap:'As Bernardo in “Tonight”'},
+   {src:'img-tour-bernardo.jpg',cap:'Bernardo, West Side Story'},
+   {src:'img-tour-quote.jpg',cap:'Press: “The talent of the cast is exemplary”'}]},
  {id:'hosh',tab:'West Side Story · Harbour',year:'2024',logo:'logo-hosh-wss-white.png',title:'West Side Story',
   roles:['Moose','Understudy Bernardo'],co:'Handa Opera on Sydney Harbour · Opera Australia',
   video:'video-hosh3.mp4',poster:'video-hosh3.jpg',vcap:'West Side Story on Sydney Harbour',
@@ -13,16 +23,6 @@ const CHAPTERS=[
    {src:'img-hosh-gym.jpg',cap:'The Dance at the Gym'},
    {src:'img-hosh-stage-night.jpg',cap:'The stage at night'},
    {src:'img-hosh-fireworks.jpg',cap:'Fireworks just before interval'}]},
- {id:'tour',tab:'West Side Story · Tour',year:'2019–21',logo:'logo-wss-tour-black.png',inv:1,title:'West Side Story',
-  roles:['Bernardo','Pepe · u/s Bernardo'],co:'Aus/NZ International Tour · GWB, Opera Australia',
-  video:'video-tour-mambo2.mp4',poster:'video-tour-mambo2.jpg',vcap:'Media call, as Pepe',
-  text:'The international tour across Australia and New Zealand. I joined in 2019 as Pepe, understudying Bernardo, and in 2021 I took on Bernardo himself, leading the Sharks.',
-  facts:[['2021','Bernardo'],['2019','Pepe, u/s Bernardo'],['Territory','Australia & New Zealand'],['Producers','GWB, Opera Australia']],
-  media:[
-   {src:'img-tour-sharks.jpg',cap:'With my Sharks in “Tonight”'},
-   {src:'img-tour-tonight.jpg',cap:'As Bernardo in “Tonight”'},
-   {src:'img-tour-bernardo.jpg',cap:'Bernardo, West Side Story'},
-   {src:'img-tour-quote.jpg',cap:'Press: “The talent of the cast is exemplary”'}]},
  {id:'uss',tab:'Universal Studios',year:'',logo:'logo-uss.png',title:'Universal Studios Singapore',
   roles:['Singer & dancer'],co:'Resorts World Sentosa, Singapore',
   text:'Singing and dancing in the theme park’s live shows at Resorts World Sentosa, performing for visitors from all over the world.',
@@ -62,14 +62,14 @@ const SCREEN=[
  {t:'KFC',k:'Featured extra',logo:'logo-kfc.svg',inv:1,poster:'video-kfc.jpg',video:'video-kfc.mp4',
   p:'In the KFC “New Girl” TV commercial: that’s me in the back of the crowd in the sombrero, and again in the final shot.'}];
 const REEL=[
- {g:'Theatre',items:[
-  {src:'hosh3',t:'Sydney Harbour',s:'West Side Story · 2024'},
-  {src:'bernardo',t:'Bernardo',s:'Footage: @sydneyweekender'},
-  {src:'tour-mambo2',t:'The tour',s:'Media call · as Pepe'}]},
- {g:'Cruise shows',items:[
-  {src:'celeb-dance',t:'Broken Strings',s:'Celebrity Solstice'}]},
+ {g:'Musical theatre',items:[
+  {src:'bernardo',t:'Bernardo',s:'West Side Story · Footage: @sydneyweekender'},
+  {src:'tour-mambo2',t:'The tour',s:'West Side Story Aus/NZ · media call'},
+  {src:'hosh3',t:'Sydney Harbour',s:'West Side Story · 2024'}]},
  {g:'Presenting',items:[
   {src:'paramount',t:'Paramount',s:'Movie Scoop presenter'}]},
+ {g:'Cruise shows',items:[
+  {src:'celeb-dance',t:'Broken Strings',s:'Celebrity Solstice'}]},
  {g:'TVCs',still:1,items:[
   {src:'hrb',t:'H&R Block',s:'Hero'},
   {src:'imaceleb',t:'I’m A Celebrity…',s:'Dancer'},
@@ -79,8 +79,8 @@ const REEL=[
   {src:'ccs',t:'CC’s',s:'Hero'},
   {src:'ladbrokes2',t:'Ladbrokes',s:'Featured extra'}]}];
 const CREDITS=[
- ['West Side Story — Handa Opera on Sydney Harbour','Moose · u/s Bernardo','Opera Australia · 2024','Stage'],
  ['West Side Story — Aus/NZ International Tour','Bernardo','GWB, Opera Australia · 2021','Stage'],
+ ['West Side Story — Handa Opera on Sydney Harbour','Moose · u/s Bernardo','Opera Australia · 2024','Stage'],
  ['West Side Story — Aus/NZ International Tour','Pepe · u/s Bernardo','GWB, Opera Australia · 2019','Stage'],
  ['The Original Grease','Kenickie','Squabbalogic','Stage'],
  ['Bring It On: The Musical (Sydney & Queensland)','Cameron','Supply Evolution','Stage'],
@@ -157,7 +157,7 @@ function drawCredits(){const q=$('#csearch').value.trim().toLowerCase();
 $$('#cfilter .tab').forEach(t=>t.onclick=()=>{ft=t.dataset.t;$$('#cfilter .tab').forEach(x=>x.classList.toggle('on',x===t));drawCredits()});
 $('#csearch').oninput=drawCredits;drawCredits();
 /* motion */
-const ROLES=['Singer','Dancer','Actor','Presenter','Bernardo','Moose','Reverb'];let ri=0;
+const ROLES=['Presenter','Actor','Singer','Dancer','Bernardo','Presenter','Actor','Singer','Dancer'];let ri=0;
 setInterval(()=>{const el=$('#role'),w=el.textContent,nx=ROLES[ri=(ri+1)%ROLES.length];let k=w.length;
  const del=setInterval(()=>{el.textContent=w.slice(0,--k);if(k<=0){clearInterval(del);let a=0;const ty=setInterval(()=>{el.textContent=nx.slice(0,++a);if(a>=nx.length)clearInterval(ty)},70)}},40)},2600);
 const hero=$('.hero');hero.addEventListener('pointermove',e=>{const r=hero.getBoundingClientRect();$('#spot').style.setProperty('--x',(e.clientX-r.left)+'px');$('#spot').style.setProperty('--y',(e.clientY-r.top)+'px')});
