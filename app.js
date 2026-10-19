@@ -55,25 +55,29 @@ const SCREEN=[
   p:'Dancer in the TV commercial for I’m A Celebrity… Get Me Out Of Here!, ITV Studios for Channel 10: the red-carpet kicks, the eyeball-fork circle from above and the lawn line.'},
  {t:'H&R Block',k:'Hero',logo:'logo-hrblock.svg',inv:1,poster:'video-hrb.jpg',video:'video-hrb.mp4',
   p:'The hero of H&R Block’s File Free student TV commercial: the library, the late-night tax question and the iPad.'},
- {t:'Aquarius',k:'Featured dancer',poster:'video-aquarius.jpg',video:'video-aquarius.mp4',
+ {t:'Aquarius',k:'Featured dancer',logo:'logo-aquarius.svg',inv:1,poster:'video-aquarius.jpg',video:'video-aquarius.mp4',
   p:'Dancing in the Aquarius “All Day Long” TV commercial for Coca-Cola Japan, shot in Sydney: the street dance and the balloon finale. I’m on the right in the red shirt and braces.'},
- {t:'Toyota RAV4',k:'Featured extra',poster:'video-rav4.jpg',video:'video-rav4.mp4',
+ {t:'Toyota RAV4',k:'Featured extra',logo:'logo-toyota.svg',inv:1,poster:'video-rav4.jpg',video:'video-rav4.mp4',
   p:'In the Toyota RAV4 “Love for Impossible” TV commercial: running the dunes and in the final group pose behind the car, in the yellow shirt and cap.'},
  {t:'KFC',k:'Featured extra',logo:'logo-kfc.svg',inv:1,poster:'video-kfc.jpg',video:'video-kfc.mp4',
   p:'In the KFC “New Girl” TV commercial: that’s me in the back of the crowd in the sombrero, and again in the final shot.'}];
 const REEL=[
- {src:'hosh3',t:'Sydney Harbour',s:'West Side Story · 2024',w:1},
- {src:'bernardo',t:'Bernardo',s:'Footage: @sydneyweekender'},
- {src:'tour-mambo2',t:'The tour',s:'Media call · as Pepe'},
- {src:'celeb-dance',t:'Broken Strings',s:'Celebrity Solstice',w:1},
- {src:'hrb',t:'H&R Block',s:'TVC · Hero',w:1},
- {src:'paramount',t:'Paramount',s:'Presenter'},
- {src:'ccs',t:'CC’s',s:'TVC · Hero'},
- {src:'imaceleb',t:'I’m A Celebrity…',s:'TVC · Dancer',w:1},
- {src:'kfc',t:'KFC',s:'TVC · Featured extra',w:1},
- {src:'aquarius',t:'Aquarius',s:'TVC · Featured dancer',w:1},
- {src:'rav4',t:'Toyota RAV4',s:'TVC · Featured extra',w:1},
- {src:'ladbrokes2',t:'Ladbrokes',s:'TVC with Mark Wahlberg',w:1}];
+ {g:'Theatre',items:[
+  {src:'hosh3',t:'Sydney Harbour',s:'West Side Story · 2024'},
+  {src:'bernardo',t:'Bernardo',s:'Footage: @sydneyweekender'},
+  {src:'tour-mambo2',t:'The tour',s:'Media call · as Pepe'}]},
+ {g:'Cruise shows',items:[
+  {src:'celeb-dance',t:'Broken Strings',s:'Celebrity Solstice'}]},
+ {g:'Presenting',items:[
+  {src:'paramount',t:'Paramount',s:'Movie Scoop presenter'}]},
+ {g:'TVCs',still:1,items:[
+  {src:'hrb',t:'H&R Block',s:'Hero'},
+  {src:'imaceleb',t:'I’m A Celebrity…',s:'Dancer'},
+  {src:'kfc',t:'KFC',s:'Featured extra'},
+  {src:'aquarius',t:'Aquarius',s:'Featured dancer'},
+  {src:'rav4',t:'Toyota RAV4',s:'Featured extra'},
+  {src:'ccs',t:'CC’s',s:'Hero'},
+  {src:'ladbrokes2',t:'Ladbrokes',s:'Featured extra'}]}];
 const CREDITS=[
  ['West Side Story — Handa Opera on Sydney Harbour','Moose · u/s Bernardo','Opera Australia · 2024','Stage'],
  ['West Side Story — Aus/NZ International Tour','Bernardo','GWB, Opera Australia · 2021','Stage'],
@@ -100,8 +104,8 @@ const CREDITS=[
  ['Certificate III in Theatre and Screen','Graduate','ACTT','Training'],
  ['Certificate IV in Dance','Graduate','Village Nation (Village on Broadway)','Training'],
  ['Diploma of Musical Theatre','Graduate','Village Nation (Village on Broadway)','Training']];
-const THEATRE_LOGOS=[['logo-hosh-wss-white.png','West Side Story, Handa Opera on Sydney Harbour'],['logo-wss-tour-black.png','West Side Story, Aus/NZ tour'],['logo-uss.png','Universal Studios Singapore'],['logo-celebrity.svg','Celebrity Cruises'],['logo-royal-caribbean.svg','Royal Caribbean International']];
-const SCREEN_LOGOS=[['logo-paramount.svg','Paramount'],['logo-netflix.svg','Netflix'],['logo-imaceleb.jpg','I’m A Celebrity… Get Me Out Of Here!',1],['logo-network10.svg','Network 10'],['logo-itv-studios.svg','ITV Studios'],['logo-hrblock.svg','H&R Block'],['logo-kfc.svg','KFC'],['logo-ladbrokes-white.png','Ladbrokes'],['logo-ccs-white.png','CC’s']];
+const THEATRE_LOGOS=[['logo-hosh-wss-white.png','West Side Story, Handa Opera on Sydney Harbour'],['logo-wss-tour-black.png','West Side Story, Aus/NZ tour'],['logo-uss.png','Universal Studios Singapore',1],['logo-celebrity.svg','Celebrity Cruises'],['logo-royal-caribbean.svg','Royal Caribbean International']];
+const SCREEN_LOGOS=[['logo-paramount.svg','Paramount'],['logo-netflix.svg','Netflix'],['logo-imaceleb.jpg','I’m A Celebrity… Get Me Out Of Here!',1],['logo-network10.svg','Network 10'],['logo-itv-studios.svg','ITV Studios'],['logo-hrblock.svg','H&R Block'],['logo-kfc.svg','KFC'],['logo-toyota.svg','Toyota'],['logo-aquarius.svg','Aquarius'],['logo-ladbrokes-white.png','Ladbrokes'],['logo-ccs-white.png','CC’s']];
 /* lightbox */
 const groups={};let cur=null,ci=0;
 function reg(g,item){(groups[g]=groups[g]||[]).push(item);return groups[g].length-1}
@@ -124,8 +128,8 @@ $('#yr').textContent=new Date().getFullYear();
 const logoRow=L=>{const h=L.map(([src,alt,badge])=>`<img src="${src}" alt="${alt}" title="${alt}" class="${badge?'badge':''}" loading="lazy">`).join('');return h+h+h+h};
 $('#trackTheatre').innerHTML=logoRow(THEATRE_LOGOS);$('#trackScreen').innerHTML=logoRow(SCREEN_LOGOS);
 $$('.trio button').forEach(b=>bindLB(b,'about',{src:b.dataset.src,cap:b.dataset.cap}));
-$('#reelGrid').innerHTML=REEL.map(r=>`<div class="vcard rv ${r.w?'wide':''}"><video muted loop playsinline preload="none" poster="video-${r.src}.jpg" src="video-${r.src}.mp4"></video><div class="play">▶</div><div class="cap"><b>${r.t}</b><small>${r.s}</small></div></div>`).join('');
-$$('#reelGrid .vcard').forEach((c,i)=>{const r=REEL[i];bindLB(c,'reel',{t:'v',src:`video-${r.src}.mp4`,poster:`video-${r.src}.jpg`,cap:r.t,sub:r.s});hoverPlay(c,$('video',c))});
+$('#reelGrid').innerHTML=REEL.map(G=>`<div class="rgroup rv"><div class="rhead"><h3 class="disp">${G.g}</h3><span>${G.items.length} ${G.items.length>1?'clips':'clip'}</span></div><div class="rgrid">${G.items.map(r=>`<div class="vcard" data-src="${r.src}">${G.still?`<img src="video-${r.src}.jpg" alt="${r.t}" loading="lazy">`:`<video muted loop playsinline preload="none" poster="video-${r.src}.jpg" src="video-${r.src}.mp4"></video>`}<div class="play">▶</div><div class="cap"><b>${r.t}</b><small>${r.s}</small></div></div>`).join('')}</div></div>`).join('');
+$$('#reelGrid .vcard').forEach(c=>{const r=REEL.flatMap(G=>G.items).find(x=>x.src===c.dataset.src);bindLB(c,'reel',{t:'v',src:`video-${r.src}.mp4`,poster:`video-${r.src}.jpg`,cap:r.t,sub:r.s});const v=$('video',c);if(v)hoverPlay(c,v)});
 $('#tabs').innerHTML=CHAPTERS.map((c,i)=>`<button class="tab ${i?'':'on'}" data-i="${i}">${c.tab}${c.year?`<span class="y">${c.year}</span>`:''}</button>`).join('');
 $('#chapters').innerHTML=CHAPTERS.map((c,i)=>`<article class="chapter ${i?'':'on'}" id="ch-${c.id}"><div>${c.video?`<div class="stagev"><video muted loop playsinline ${i?'':'autoplay'} preload="metadata" poster="${c.poster}" src="${c.video}"></video><span class="expand">⤢ Expand</span></div>`
  :`<div class="stagev" style="display:grid;place-items:center;background:radial-gradient(circle at 50% 40%,#2a2330,#0f0d12);cursor:default"><img src="${c.logo}" alt="${c.title}" style="max-width:55%;max-height:60%"></div>`}
