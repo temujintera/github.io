@@ -57,6 +57,8 @@ const SCREEN=[
   p:'The hero of H&R Block’s File Free student TV commercial: the library, the late-night tax question and the iPad.'},
  {t:'Aquarius',k:'Featured dancer',poster:'video-aquarius.jpg',video:'video-aquarius.mp4',
   p:'Dancing in the Aquarius “All Day Long” TV commercial for Coca-Cola Japan, shot in Sydney: the street dance and the balloon finale. I’m on the right in the red shirt and braces.'},
+ {t:'Toyota RAV4',k:'Featured extra',poster:'video-rav4.jpg',video:'video-rav4.mp4',
+  p:'In the Toyota RAV4 “Love for Impossible” TV commercial: running the dunes and in the final group pose behind the car, in the yellow shirt and cap.'},
  {t:'KFC',k:'Featured extra',logo:'logo-kfc.svg',inv:1,poster:'video-kfc.jpg',video:'video-kfc.mp4',
   p:'In the KFC “New Girl” TV commercial: that’s me in the back of the crowd in the sombrero, and again in the final shot.'}];
 const REEL=[
@@ -69,8 +71,9 @@ const REEL=[
  {src:'ccs',t:'CC’s',s:'TVC · Hero'},
  {src:'imaceleb',t:'I’m A Celebrity…',s:'TVC · Dancer',w:1},
  {src:'kfc',t:'KFC',s:'TVC · Featured extra',w:1},
- {src:'aquarius',t:'Aquarius',s:'TVC · Featured dancer'},
- {src:'ladbrokes2',t:'Ladbrokes',s:'TVC with Mark Wahlberg'}];
+ {src:'aquarius',t:'Aquarius',s:'TVC · Featured dancer',w:1},
+ {src:'rav4',t:'Toyota RAV4',s:'TVC · Featured extra',w:1},
+ {src:'ladbrokes2',t:'Ladbrokes',s:'TVC with Mark Wahlberg',w:1}];
 const CREDITS=[
  ['West Side Story — Handa Opera on Sydney Harbour','Moose · u/s Bernardo','Opera Australia · 2024','Stage'],
  ['West Side Story — Aus/NZ International Tour','Bernardo','GWB, Opera Australia · 2021','Stage'],
@@ -92,7 +95,8 @@ const CREDITS=[
  ['H&R Block TVC','Hero','H&R Block','Screen'],
  ['KFC “New Girl” TVC','Featured extra','KFC','Screen'],
  ['Aquarius “All Day Long” TVC','Featured dancer','Coca-Cola Japan','Screen'],
- ['Dulux, Toyota and more','TVCs','Various','Screen'],
+ ['Toyota RAV4 TVC','Featured extra','Toyota','Screen'],
+ ['Dulux and more','TVCs','Various','Screen'],
  ['Certificate III in Theatre and Screen','Graduate','ACTT','Training'],
  ['Certificate IV in Dance','Graduate','Village Nation (Village on Broadway)','Training'],
  ['Diploma of Musical Theatre','Graduate','Village Nation (Village on Broadway)','Training']];
