@@ -51,11 +51,11 @@ const SCREEN=[
   p:'Featured as the greyhound in the Ladbrokes TV commercial starring Mark Wahlberg.'},
  {t:'CC’s',k:'Hero',logo:'logo-ccs-white.png',video:'video-ccs.mp4',poster:'video-ccs.jpg',
   p:'The hero of the CC’s TV commercial for Snackbrands: the packet, the chip burst and all the close-ups.'},
- {t:'I’m A Celebrity…',k:'Dancer',poster:'video-imaceleb.jpg',video:'video-imaceleb.mp4',
+ {t:'I’m A Celebrity…',k:'Dancer',logo:'logo-imaceleb.jpg',badge:1,poster:'video-imaceleb.jpg',video:'video-imaceleb.mp4',
   p:'Dancer in the TV commercial for I’m A Celebrity… Get Me Out Of Here!, ITV Studios for Channel 10: the red-carpet kicks, the eyeball-fork circle from above and the lawn line.'},
- {t:'H&R Block',k:'Hero',poster:'video-hrb.jpg',video:'video-hrb.mp4',
+ {t:'H&R Block',k:'Hero',logo:'logo-hrblock.svg',inv:1,poster:'video-hrb.jpg',video:'video-hrb.mp4',
   p:'The hero of H&R Block’s File Free student TV commercial: the library, the late-night tax question and the iPad.'},
- {t:'KFC',k:'Featured extra',poster:'video-kfc.jpg',video:'video-kfc.mp4',
+ {t:'KFC',k:'Featured extra',logo:'logo-kfc.svg',inv:1,poster:'video-kfc.jpg',video:'video-kfc.mp4',
   p:'In the KFC “New Girl” TV commercial: that’s me in the back of the crowd in the sombrero, and again in the final shot.'}];
 const REEL=[
  {src:'hosh3',t:'Sydney Harbour',s:'West Side Story · 2024',w:1},
@@ -75,12 +75,12 @@ const CREDITS=[
  ['The Original Grease','Kenickie','Squabbalogic','Stage'],
  ['Bring It On: The Musical (Sydney & Queensland)','Cameron','Supply Evolution','Stage'],
  ['Universal Studios Singapore','Singer & dancer','Resorts World Sentosa','Stage'],
- ['The Effectors, Showgirl','Reverb','Royal Caribbean · Spectrum of the Seas · 2025–26','Sea'],
- ['The Beautiful Dream, Live Love Legs','Singer (B3)','Royal Caribbean · Ovation of the Seas','Sea'],
- ['Sequins and Feathers, Sonic Odyssey','Singer (B1)','Royal Caribbean · Quantum of the Seas','Sea'],
- ['Sequins and Feathers, Sonic Odyssey','Singer (B3)','Royal Caribbean · Quantum of the Seas','Sea'],
- ['The Beautiful Dream, Live Love Legs','Singer (B3)','Royal Caribbean · Ovation of the Seas','Sea'],
- ['Amade, Rock City, Broken Strings','Singer & dancer','Celebrity Cruises · Celebrity Solstice','Sea'],
+ ['The Effectors, Showgirl','Reverb','Royal Caribbean · Spectrum of the Seas · 2025–26','Stage'],
+ ['The Beautiful Dream, Live Love Legs','Singer (B3)','Royal Caribbean · Ovation of the Seas','Stage'],
+ ['Sequins and Feathers, Sonic Odyssey','Singer (B1)','Royal Caribbean · Quantum of the Seas','Stage'],
+ ['Sequins and Feathers, Sonic Odyssey','Singer (B3)','Royal Caribbean · Quantum of the Seas','Stage'],
+ ['The Beautiful Dream, Live Love Legs','Singer (B3)','Royal Caribbean · Ovation of the Seas','Stage'],
+ ['Amade, Rock City, Broken Strings','Singer & dancer','Celebrity Cruises · Celebrity Solstice','Stage'],
  ['Teenage Mutant Ninja Turtles: Mutant Mayhem','Presenter','Paramount (ParamountAU)','Screen'],
  ['Ladbrokes TVC, with Mark Wahlberg','Featured extra','Ladbrokes','Screen'],
  ['CC’s TVC','Hero','Snackbrands','Screen'],
@@ -89,16 +89,18 @@ const CREDITS=[
  ['H&R Block TVC','Hero','H&R Block','Screen'],
  ['KFC “New Girl” TVC','Featured extra','KFC','Screen'],
  ['Dulux, Toyota and more','TVCs','Various','Screen'],
- ['Certificate IV in Theatre and Screen','Graduate','ACTT','Training'],
+ ['Certificate III in Theatre and Screen','Graduate','ACTT','Training'],
  ['Certificate IV in Dance','Graduate','Village Nation (Village on Broadway)','Training'],
  ['Diploma of Musical Theatre','Graduate','Village Nation (Village on Broadway)','Training']];
-const LOGOS=[['logo-hosh-wss-white.png'],['logo-wss-tour-black.png',1],['logo-uss.png'],['logo-celebrity.svg',1],['logo-royal-caribbean.svg',1],['logo-paramount.svg',1],['logo-ladbrokes-white.png'],['logo-ccs-white.png'],['Netflix'],['ITV Studios'],['Channel 10']];
+const THEATRE_LOGOS=[['logo-hosh-wss-white.png','West Side Story, Handa Opera on Sydney Harbour'],['logo-wss-tour-black.png','West Side Story, Aus/NZ tour'],['logo-uss.png','Universal Studios Singapore'],['logo-celebrity.svg','Celebrity Cruises'],['logo-royal-caribbean.svg','Royal Caribbean International']];
+const SCREEN_LOGOS=[['logo-paramount.svg','Paramount'],['logo-netflix.svg','Netflix'],['logo-imaceleb.jpg','I’m A Celebrity… Get Me Out Of Here!',1],['logo-network10.svg','Network 10'],['logo-itv-studios.svg','ITV Studios'],['logo-hrblock.svg','H&R Block'],['logo-kfc.svg','KFC'],['logo-ladbrokes-white.png','Ladbrokes'],['logo-ccs-white.png','CC’s']];
 /* lightbox */
 const groups={};let cur=null,ci=0;
 function reg(g,item){(groups[g]=groups[g]||[]).push(item);return groups[g].length-1}
 function openLB(g,i){cur=g;ci=i;$('#lb').classList.add('on');document.body.style.overflow='hidden';showLB()}
-function showLB(){const it=groups[cur][ci],box=$('#lbBox');box.innerHTML=it.t==='v'?`<video src="${it.src}" poster="${it.poster||''}" controls autoplay loop playsinline muted></video>`:`<img src="${it.src}" alt="">`;
+function showLB(){$$('video').forEach(v=>{if(!v.closest('#lb'))v.pause()});const it=groups[cur][ci],box=$('#lbBox');box.innerHTML=it.t==='v'?`<video src="${it.src}" poster="${it.poster||''}" controls autoplay playsinline></video>`:`<img src="${it.src}" alt="">`;
  $('#lbCap').innerHTML=`${it.cap||''}${it.sub?`<small>${it.sub}</small>`:''}`;$('#lbCount').textContent=`${ci+1} / ${groups[cur].length}`;
+ const lv=$('video',box);if(lv){lv.muted=false;lv.volume=1;lv.play().catch(()=>{lv.muted=true;lv.play()})}
  const many=groups[cur].length>1;$('#lbP').style.display=$('#lbN').style.display=many?'':'none'}
 function closeLB(){$('#lb').classList.remove('on');$('#lbBox').innerHTML='';document.body.style.overflow=''}
 function step(d){const n=groups[cur].length;ci=(ci+d+n)%n;showLB()}
@@ -111,8 +113,8 @@ function bindLB(el,g,item){const i=reg(g,item);el.addEventListener('click',()=>o
 const hoverPlay=(c,v)=>{if(!isTouch){c.addEventListener('mouseenter',()=>v.play().catch(()=>{}));c.addEventListener('mouseleave',()=>v.pause())}};
 /* build */
 $('#yr').textContent=new Date().getFullYear();
-const lg=LOGOS.map(([s,inv])=>s.includes('/')?`<img src="${s}" alt="" class="${inv?'inv':''}">`:`<span>${s}</span>`).join('');
-$('#track').innerHTML=lg+lg;
+const logoRow=L=>{const h=L.map(([src,alt,badge])=>`<img src="${src}" alt="${alt}" title="${alt}" class="${badge?'badge':''}" loading="lazy">`).join('');return h+h+h+h};
+$('#trackTheatre').innerHTML=logoRow(THEATRE_LOGOS);$('#trackScreen').innerHTML=logoRow(SCREEN_LOGOS);
 $$('.trio button').forEach(b=>bindLB(b,'about',{src:b.dataset.src,cap:b.dataset.cap}));
 $('#reelGrid').innerHTML=REEL.map(r=>`<div class="vcard rv ${r.w?'wide':''}"><video muted loop playsinline preload="none" poster="video-${r.src}.jpg" src="video-${r.src}.mp4"></video><div class="play">▶</div><div class="cap"><b>${r.t}</b><small>${r.s}</small></div></div>`).join('');
 $$('#reelGrid .vcard').forEach((c,i)=>{const r=REEL[i];bindLB(c,'reel',{t:'v',src:`video-${r.src}.mp4`,poster:`video-${r.src}.jpg`,cap:r.t,sub:r.s});hoverPlay(c,$('video',c))});
@@ -129,12 +131,12 @@ $$('#tabs .tab').forEach(t=>t.onclick=()=>{$$('#tabs .tab').forEach(x=>x.classLi
 $('#voyage').innerHTML=SHIPS.map((s,i)=>`<div class="stop ${i?'':'open'}"><div class="h"><span><b>${s.ship}</b>${s.latest?'<span class="badge">Latest</span>':''}</span><small>${s.role}${s.years?' · '+s.years:''}</small></div><div class="d"><div>Production shows: <b>${s.shows}</b></div></div></div>`).join('');
 $$('.stop').forEach(s=>s.onclick=()=>s.classList.toggle('open'));
 $('#screenGrid').innerHTML=SCREEN.map(s=>`<div class="sc rv"><div class="m"><video muted loop playsinline preload="none" poster="${s.poster}" src="${s.video}"></video><div class="play" style="position:absolute;top:12px;right:12px;width:40px;height:40px;border-radius:50%;display:grid;place-items:center;background:rgba(227,49,43,.9)">▶</div></div>
- <div class="b"><div class="k"><h4>${s.t}</h4>${s.logo?`<img src="${s.logo}" alt="" style="${s.inv?'filter:brightness(0) invert(1)':''}">`:''}</div><span class="pill">${s.k}</span><p>${s.p}</p>
+ <div class="b"><div class="k"><h4>${s.t}</h4>${s.logo?`<img src="${s.logo}" alt="" class="${s.badge?'badge':''}" style="${s.inv?'filter:brightness(0) invert(1)':''}">`:''}</div><span class="pill">${s.k}</span><p>${s.p}</p>
  ${s.mini?`<div class="mini">${s.mini.map(m=>`<button><img src="${m[0]}" alt="${m[1]}" loading="lazy"></button>`).join('')}</div>`:''}</div></div>`).join('');
 $$('#screenGrid .sc').forEach((c,i)=>{const s=SCREEN[i],g='sc'+i,m=$('.m',c);bindLB(m,g,{t:'v',src:s.video,poster:s.poster,cap:s.t,sub:s.k});
  (s.mini||[]).forEach((mm,j)=>bindLB($$('.mini button',c)[j],g,{src:mm[0],cap:mm[1]}));hoverPlay(c,$('video',m))});
 /* credits */
-const TYPES=['All','Stage','Sea','Screen','Training'];let ft='All';
+const TYPES=['All','Stage','Screen','Training'];let ft='All';
 $('#cfilter').innerHTML=TYPES.map((t,i)=>`<button class="tab ${i?'':'on'}" data-t="${t}">${t}<span class="y">${t==='All'?CREDITS.length:CREDITS.filter(c=>c[3]===t).length}</span></button>`).join('');
 function drawCredits(){const q=$('#csearch').value.trim().toLowerCase();
  const rows=CREDITS.filter(c=>(ft==='All'||c[3]===ft)&&(!q||c.join(' ').toLowerCase().includes(q)));
