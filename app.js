@@ -59,6 +59,8 @@ const SCREEN=[
   p:'Dancing in the Aquarius “All Day Long” TV commercial for Coca-Cola Japan, shot in Sydney: the street dance and the balloon finale. I’m on the right in the red shirt and braces.'},
  {t:'Toyota RAV4',k:'Featured extra',logo:'logo-toyota.svg',inv:1,poster:'video-rav4.jpg',video:'video-rav4.mp4',
   p:'In the Toyota RAV4 “Love for Impossible” TV commercial: running the dunes and in the final group pose behind the car, in the yellow shirt and cap.'},
+ {t:'Dulux',k:'Featured extra',logo:'logo-dulux.png',badge:1,poster:'video-dulux.jpg',video:'video-dulux.mp4',
+  p:'In Dulux’s “Change Starts Here” TV commercial (DDB Melbourne): the house party, the night on the beach, and painting the green wall with friends.'},
  {t:'KFC',k:'Featured extra',logo:'logo-kfc.svg',inv:1,poster:'video-kfc.jpg',video:'video-kfc.mp4',
   p:'In the KFC “New Girl” TV commercial: that’s me in the back of the crowd in the sombrero, and again in the final shot.'}];
 const REEL=[
@@ -77,6 +79,7 @@ const REEL=[
   {full:'aquarius',src:'aquarius',t:'Aquarius',s:'Featured dancer',logo:'logo-aquarius.svg'},
   {full:'rav4',src:'rav4',t:'Toyota RAV4',s:'Featured extra',logo:'logo-toyota.svg'},
   {full:'ccs',src:'ccs',t:'CC’s',s:'Hero',logo:'logo-ccs-white.png'},
+  {full:'dulux',src:'dulux',t:'Dulux',s:'Featured extra',logo:'logo-dulux.png',badge:1},
   {full:'ladbrokes',src:'ladbrokes2',t:'Ladbrokes',s:'Featured extra · with Mark Wahlberg',logo:'logo-ladbrokes-white.png'}]}];
 const CREDITS=[
  ['West Side Story — Aus/NZ International Tour','Bernardo','GWB, Opera Australia · 2021','Stage'],
@@ -100,12 +103,12 @@ const CREDITS=[
  ['KFC “New Girl” TVC','Featured extra','KFC','Screen'],
  ['Aquarius “All Day Long” TVC','Featured dancer','Coca-Cola Japan','Screen'],
  ['Toyota RAV4 TVC','Featured extra','Toyota','Screen'],
- ['Dulux and more','TVCs','Various','Screen'],
+ ['Dulux “Change Starts Here” TVC','Featured extra','Dulux · DDB Melbourne','Screen'],
  ['Certificate III in Theatre and Screen','Graduate','ACTT','Certification'],
  ['Certificate IV in Dance','Graduate','Village Nation (Village on Broadway)','Certification'],
  ['Diploma of Musical Theatre','Graduate','Village Nation (Village on Broadway)','Certification']];
 const THEATRE_LOGOS=[['logo-hosh-wss-white.png','West Side Story, Handa Opera on Sydney Harbour'],['logo-wss-tour-black.png','West Side Story, Aus/NZ tour'],['logo-uss.png','Universal Studios Singapore',1],['logo-celebrity.svg','Celebrity Cruises'],['logo-royal-caribbean.svg','Royal Caribbean International']];
-const SCREEN_LOGOS=[['logo-paramount.svg','Paramount'],['logo-netflix.svg','Netflix'],['logo-imaceleb.jpg','I’m A Celebrity… Get Me Out Of Here!',1],['logo-network10.svg','Network 10'],['logo-itv-studios.svg','ITV Studios'],['logo-hrblock.svg','H&R Block'],['logo-kfc.svg','KFC'],['logo-toyota.svg','Toyota'],['logo-aquarius.svg','Aquarius'],['logo-ladbrokes-white.png','Ladbrokes'],['logo-ccs-white.png','CC’s']];
+const SCREEN_LOGOS=[['logo-paramount.svg','Paramount'],['logo-netflix.svg','Netflix'],['logo-imaceleb.jpg','I’m A Celebrity… Get Me Out Of Here!',1],['logo-network10.svg','Network 10'],['logo-itv-studios.svg','ITV Studios'],['logo-hrblock.svg','H&R Block'],['logo-kfc.svg','KFC'],['logo-dulux.png','Dulux',1],['logo-toyota.svg','Toyota'],['logo-aquarius.svg','Aquarius'],['logo-ladbrokes-white.png','Ladbrokes'],['logo-ccs-white.png','CC’s']];
 /* lightbox */
 const groups={};let cur=null,ci=0;
 function reg(g,item){(groups[g]=groups[g]||[]).push(item);return groups[g].length-1}
