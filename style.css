@@ -245,3 +245,39 @@ footer{padding:50px 0 60px;color:var(--mute);font-size:14px}
 .vcard.tall video{object-fit:contain!important}
 .vcard.tall:hover video{transform:none}
 .thumbs img{object-position:50% 12%}
+
+/* TVC preview box */
+.tvshow{display:grid;grid-template-columns:1fr 300px;gap:16px;align-items:stretch}
+.tvscreen{position:relative;aspect-ratio:16/9;border-radius:var(--r);overflow:hidden;background:#000;border:1px solid var(--line)}
+.tvscreen video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.tvgrad{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.45) 0%,transparent 30%,transparent 55%,rgba(0,0,0,.85) 100%);pointer-events:none}
+.tvlogo{position:absolute;top:18px;left:20px;height:40px;width:auto;max-width:180px;object-fit:contain;filter:brightness(0) invert(1);opacity:.95}
+.tvlogo.badge{filter:none;height:54px;border-radius:8px}
+.tvinfo{position:absolute;left:22px;bottom:26px;right:22px}
+.tvcount{font-size:12px;font-weight:800;letter-spacing:.18em;color:var(--gold);margin-bottom:6px}
+.tvtitle{font-size:clamp(34px,5vw,64px)}
+.tvrole{display:inline-block;margin-top:10px;padding:6px 14px;border-radius:99px;background:var(--red);font-weight:700;font-size:14px}
+.tvsound{position:absolute;top:16px;right:16px;background:rgba(0,0,0,.55);border:1px solid rgba(255,255,255,.25);color:#fff;border-radius:99px;padding:8px 14px;font:700 13px Inter,sans-serif;cursor:pointer}
+.tvsound:hover{background:var(--red);border-color:var(--red)}
+.tvbar{position:absolute;left:0;right:0;bottom:0;height:3px;background:rgba(255,255,255,.15)}
+.tvbar i{display:block;height:100%;width:0;background:var(--gold)}
+.tvshow.swap .tvinfo,.tvshow.swap .tvlogo{animation:in .6s var(--ease)}
+.tvlist{list-style:none;display:flex;flex-direction:column;gap:6px;max-height:100%;overflow:auto}
+.tvlist li{display:flex;align-items:center;gap:12px;padding:10px 12px;border:1px solid var(--line);border-radius:12px;cursor:pointer;background:var(--bg2);transition:.25s}
+.tvlist li:hover{border-color:var(--mute)}
+.tvlist li.on{background:var(--card);border-color:var(--red);box-shadow:inset 3px 0 0 var(--red)}
+.tvlist li img{width:54px;height:26px;object-fit:contain;filter:brightness(0) invert(1);opacity:.85;flex:none}
+.tvlist li img.badge{filter:none;opacity:1;border-radius:4px;height:30px}
+.tvlist b{display:block;font-size:14px}
+.tvlist small{color:var(--mute);font-size:12px}
+@media(max-width:860px){.tvshow{grid-template-columns:1fr}.tvlist{flex-direction:row;overflow-x:auto;padding-bottom:6px}.tvlist li{flex:none}.tvlogo{height:30px}.tvsound{font-size:12px;padding:6px 10px}}
+
+.hero .hv{opacity:0;transition:opacity .9s ease}
+.hero .hv.on{opacity:1}
+
+.fullhead{display:flex;justify-content:space-between;align-items:baseline;margin:28px 0 12px}
+.fullhead h4{font-family:"Anton";text-transform:uppercase;font-size:24px;letter-spacing:.02em}
+.fullhead span{color:var(--mute);font-size:13px}
+.fullgrid{grid-template-columns:repeat(4,1fr)!important}
+.fullgrid .vcard{aspect-ratio:16/9}
+@media(max-width:860px){.fullgrid{grid-template-columns:1fr 1fr!important}}

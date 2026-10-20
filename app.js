@@ -70,14 +70,14 @@ const REEL=[
   {src:'paramount',t:'Paramount',s:'Movie Scoop presenter'}]},
  {g:'Cruise shows',items:[
   {src:'celeb-dance',t:'Broken Strings',s:'Celebrity Solstice'}]},
- {g:'TVCs',still:1,items:[
-  {src:'hrb',t:'H&R Block',s:'Hero'},
-  {src:'imaceleb',t:'I’m A Celebrity…',s:'Dancer'},
-  {src:'kfc',t:'KFC',s:'Featured extra'},
-  {src:'aquarius',t:'Aquarius',s:'Featured dancer'},
-  {src:'rav4',t:'Toyota RAV4',s:'Featured extra'},
-  {src:'ccs',t:'CC’s',s:'Hero'},
-  {src:'ladbrokes2',t:'Ladbrokes',s:'Featured extra'}]}];
+ {g:'TVCs',show:1,items:[
+  {full:'hrb',src:'hrb',t:'H&R Block',s:'Hero',logo:'logo-hrblock.svg'},
+  {full:'imaceleb',src:'imaceleb',t:'I’m A Celebrity…',s:'Dancer',logo:'logo-imaceleb.jpg',badge:1},
+  {full:'kfc',src:'kfc',t:'KFC',s:'Featured extra',logo:'logo-kfc.svg'},
+  {full:'aquarius',src:'aquarius',t:'Aquarius',s:'Featured dancer',logo:'logo-aquarius.svg'},
+  {full:'rav4',src:'rav4',t:'Toyota RAV4',s:'Featured extra',logo:'logo-toyota.svg'},
+  {full:'ccs',src:'ccs',t:'CC’s',s:'Hero',logo:'logo-ccs-white.png'},
+  {full:'ladbrokes',src:'ladbrokes2',t:'Ladbrokes',s:'Featured extra · with Mark Wahlberg',logo:'logo-ladbrokes-white.png'}]}];
 const CREDITS=[
  ['West Side Story — Aus/NZ International Tour','Bernardo','GWB, Opera Australia · 2021','Stage'],
  ['West Side Story — Handa Opera on Sydney Harbour','Moose · u/s Bernardo','Opera Australia · 2024','Stage'],
@@ -128,8 +128,20 @@ $('#yr').textContent=new Date().getFullYear();
 const logoRow=L=>{const h=L.map(([src,alt,badge])=>`<img src="${src}" alt="${alt}" title="${alt}" class="${badge?'badge':''}" loading="lazy">`).join('');return h+h+h+h};
 $('#trackTheatre').innerHTML=logoRow(THEATRE_LOGOS);$('#trackScreen').innerHTML=logoRow(SCREEN_LOGOS);
 $$('.trio button').forEach(b=>bindLB(b,'about',{src:b.dataset.src,cap:b.dataset.cap}));
-$('#reelGrid').innerHTML=REEL.map(G=>`<div class="rgroup rv"><div class="rhead"><h3 class="disp">${G.g}</h3><span>${G.items.length} ${G.items.length>1?'clips':'clip'}</span></div><div class="rgrid">${G.items.map(r=>`<div class="vcard${r.tall?' tall':''}" data-src="${r.src}">${r.tall?`<img class="tallbg" src="video-${r.src}.jpg" alt="">`:''}${G.still?`<img src="video-${r.src}.jpg" alt="${r.t}" loading="lazy">`:`<video muted loop playsinline preload="none" poster="video-${r.src}.jpg" src="video-${r.src}.mp4"></video>`}<div class="play">▶</div><div class="cap"><b>${r.t}</b><small>${r.s}</small></div></div>`).join('')}</div></div>`).join('');
-$$('#reelGrid .vcard').forEach(c=>{const r=REEL.flatMap(G=>G.items).find(x=>x.src===c.dataset.src);bindLB(c,'reel',{t:'v',src:`video-${r.src}.mp4`,poster:`video-${r.src}.jpg`,cap:r.t,sub:r.s});const v=$('video',c);if(v)hoverPlay(c,v)});
+function tvShow(G){return `<div class="tvshow" id="tvshow"><div class="tvscreen"><video muted playsinline preload="auto"></video><div class="tvgrad"></div><img class="tvlogo" alt=""><div class="tvinfo"><div class="tvcount"></div><h4 class="disp tvtitle"></h4><span class="tvrole"></span></div><button class="tvsound" type="button">🔊 Watch with sound</button><div class="tvbar"><i></i></div></div><ol class="tvlist">${G.items.map((r,i)=>`<li data-i="${i}"><img src="${r.logo}" alt="" class="${r.badge?'badge':''}"><span><b>${r.t}</b><small>${r.s}</small></span></li>`).join('')}</ol></div><div class="fullhead"><h4>Watch the full ads</h4><span>Tap to play with sound</span></div><div class="rgrid fullgrid">${G.items.map(r=>`<div class="vcard full" data-full="${r.full}"><img src="full-${r.full}.jpg" alt="${r.t} full TV commercial" loading="lazy"><div class="play">▶</div><div class="cap"><b>${r.t}</b><small>Full TVC</small></div></div>`).join('')}</div>`}
+$('#reelGrid').innerHTML=REEL.map(G=>`<div class="rgroup rv"><div class="rhead"><h3 class="disp">${G.g}</h3><span>${G.items.length} ${G.items.length>1?'clips':'clip'}</span></div>${G.show?tvShow(G):`<div class="rgrid">${G.items.map(r=>`<div class="vcard${r.tall?' tall':''}" data-src="${r.src}">${r.tall?`<img class="tallbg" src="video-${r.src}.jpg" alt="">`:''}${G.still?`<img src="video-${r.src}.jpg" alt="${r.t}" loading="lazy">`:`<video muted loop playsinline preload="none" poster="video-${r.src}.jpg" src="video-${r.src}.mp4"></video>`}<div class="play">▶</div><div class="cap"><b>${r.t}</b><small>${r.s}</small></div></div>`).join('')}</div>`}</div>`).join('');
+(function(){const box=$('#tvshow');if(!box)return;const G=REEL.find(g=>g.show),v=$('video',box),bar=$('.tvbar i',box);let i=0,timer;
+ function go(n){i=(n+G.items.length)%G.items.length;const r=G.items[i];v.src=`video-${r.src}.mp4`;v.poster=`video-${r.src}.jpg`;v.play().catch(()=>{});
+  const lg=$('.tvlogo',box);lg.src=r.logo;lg.className='tvlogo'+(r.badge?' badge':'');$('.tvtitle',box).textContent=r.t;$('.tvrole',box).textContent=r.s;$('.tvcount',box).textContent=`TVC ${i+1} / ${G.items.length}`;
+  $$('.tvlist li',box).forEach((li,k)=>li.classList.toggle('on',k===i));box.classList.remove('swap');void box.offsetWidth;box.classList.add('swap')}
+ v.addEventListener('timeupdate',()=>{if(v.duration)bar.style.width=(v.currentTime/v.duration*100)+'%'});
+ v.addEventListener('ended',()=>go(i+1));
+ $$('.tvlist li',box).forEach(li=>li.onclick=()=>go(+li.dataset.i));
+ $('.tvsound',box).onclick=()=>{const r=G.items[i];reg('tv'+i,{});groups['tvsnd']=[{t:'v',src:`video-${r.src}.mp4`,poster:`video-${r.src}.jpg`,cap:r.t,sub:r.s}];openLB('tvsnd',0)};
+ new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){if(!v.src)go(0);else v.play().catch(()=>{})}else v.pause()}),{threshold:.3}).observe(box);
+ const lb=$('#lb');new MutationObserver(()=>{if(lb.classList.contains('on'))v.pause()}).observe(lb,{attributes:true,attributeFilter:['class']});})();
+$$('#reelGrid .vcard.full').forEach(c=>{const G=REEL.find(g=>g.show),r=G.items.find(x=>x.full===c.dataset.full);bindLB(c,'fullads',{t:'v',src:`full-${r.full}.mp4`,poster:`full-${r.full}.jpg`,cap:r.t,sub:'Full TV commercial'})});
+$$('#reelGrid .vcard:not(.full)').forEach(c=>{const r=REEL.flatMap(G=>G.items).find(x=>x.src===c.dataset.src);bindLB(c,'reel',{t:'v',src:`video-${r.src}.mp4`,poster:`video-${r.src}.jpg`,cap:r.t,sub:r.s});const v=$('video',c);if(v)hoverPlay(c,v)});
 $('#tabs').innerHTML=CHAPTERS.map((c,i)=>`<button class="tab ${i?'':'on'}" data-i="${i}">${c.tab}${c.year?`<span class="y">${c.year}</span>`:''}</button>`).join('');
 $('#chapters').innerHTML=CHAPTERS.map((c,i)=>`<article class="chapter ${i?'':'on'}" id="ch-${c.id}"><div>${c.video?`<div class="stagev"><video muted loop playsinline ${i?'':'autoplay'} preload="metadata" poster="${c.poster}" src="${c.video}"></video><span class="expand">⤢ Expand</span></div>`
  :`<div class="stagev" style="display:grid;place-items:center;background:radial-gradient(circle at 50% 40%,#2a2330,#0f0d12);cursor:default"><img src="${c.logo}" alt="${c.title}" style="max-width:55%;max-height:60%"></div>`}
@@ -170,4 +182,11 @@ const io=new IntersectionObserver(es=>es.forEach(e=>{if(!e.isIntersecting)return
  $$('[data-count]',e.target).forEach(n=>{if(n.done)return;n.done=1;const to=+n.dataset.count;let v=0;const t=setInterval(()=>{n.textContent=++v;if(v>=to)clearInterval(t)},120)});io.unobserve(e.target)}),{threshold:.12});
 $$('.rv').forEach(el=>io.observe(el));
 if(isTouch){const vo=new IntersectionObserver(es=>es.forEach(e=>{const v=e.target;e.isIntersecting?v.play().catch(()=>{}):v.pause()}),{threshold:.6});$$('.vcard video,.sc video').forEach(v=>{v.preload='metadata';vo.observe(v)})}
-$('#copy').onclick=()=>{navigator.clipboard&&navigator.clipboard.writeText('temujin.tera@gmail.com');const t=$('#toast');t.classList.add('on');setTimeout(()=>t.classList.remove('on'),1600)};
+$('#copy').onclick=()=>{navigator.clipboard&&navigator.clipboard.writeText('temujin.tera@live.com.au');const t=$('#toast');t.classList.add('on');setTimeout(()=>t.classList.remove('on'),1600)};
+
+/* hero: cycle WSS Harbour > tour dance > presenter > H&R Block */
+(function(){const L=['hosh3','tour-mambo2','paramount','hrb'];let k=0;const A=$('#heroA'),B=$('#heroB');let cur=A,nxt=B;
+ function next(){k=(k+1)%L.length;nxt.src=`video-${L[k]}.mp4`;nxt.currentTime=0;const p=nxt.play();(p&&p.then?p:Promise.resolve()).then(()=>{nxt.classList.add('on');cur.classList.remove('on');const o=cur;cur=nxt;nxt=o;setTimeout(()=>o.pause(),900)}).catch(()=>{})}
+ [A,B].forEach(v=>v.addEventListener('ended',()=>{if(v===cur)next()}));
+ A.play().catch(()=>{});
+ setInterval(()=>{if(cur.paused&&!document.hidden)cur.play().catch(()=>{})},3000);})();
