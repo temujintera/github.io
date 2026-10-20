@@ -281,3 +281,6 @@ footer{padding:50px 0 60px;color:var(--mute);font-size:14px}
 .fullgrid{grid-template-columns:repeat(4,1fr)!important}
 .fullgrid .vcard{aspect-ratio:16/9}
 @media(max-width:860px){.fullgrid{grid-template-columns:1fr 1fr!important}}
+.tvshow{align-items:start}
+.tvlist{max-height:min(46vw,560px);overflow-y:auto}
+@media(max-width:860px){.tvlist{max-height:none}}
