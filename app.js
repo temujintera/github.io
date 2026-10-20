@@ -70,6 +70,8 @@ const REEL=[
   {src:'hosh3',t:'Sydney Harbour',s:'West Side Story · 2024'}]},
  {g:'Presenting',items:[
   {src:'paramount',t:'Paramount',s:'Movie Scoop presenter'}]},
+ {g:'Acting',items:[
+  {src:'ozark',t:'Ozark',s:'Dramatic monologue · filmed by <span class="shmi"><img src="logo-shmitty-shmedia-white.png" alt="">Shmitty ShMEDIA</span>'}]},
  {g:'Cruise shows',items:[
   {src:'celeb-dance',t:'Broken Strings',s:'Celebrity Solstice'}]},
  {g:'TVCs',show:1,items:[
@@ -95,6 +97,7 @@ const CREDITS=[
  ['The Beautiful Dream, Live Love Legs','Singer (B3)','Royal Caribbean · Ovation of the Seas','Stage'],
  ['Amade, Rock City, Broken Strings','Singer & dancer','Celebrity Cruises · Celebrity Solstice','Stage'],
  ['Movie Scoop: Paramount','Presenter','Paramount (ParamountAU)','Screen'],
+ ['Ozark (dramatic monologue)','Actor','<span class="shmi"><img src="logo-shmitty-shmedia-white.png" alt="">Shmitty ShMEDIA</span>','Screen'],
  ['Ladbrokes TVC, with Mark Wahlberg','Featured extra','Ladbrokes','Screen'],
  ['CC’s TVC','Hero','Snackbrands','Screen'],
  ['I’m A Celebrity… Get Me Out Of Here! TVC','Dancer','ITV Studios · Channel 10','Screen'],
@@ -187,8 +190,8 @@ $$('.rv').forEach(el=>io.observe(el));
 if(isTouch){const vo=new IntersectionObserver(es=>es.forEach(e=>{const v=e.target;e.isIntersecting?v.play().catch(()=>{}):v.pause()}),{threshold:.6});$$('.vcard video,.sc video').forEach(v=>{v.preload='metadata';vo.observe(v)})}
 $('#copy').onclick=()=>{navigator.clipboard&&navigator.clipboard.writeText('temujin.tera@live.com.au');const t=$('#toast');t.classList.add('on');setTimeout(()=>t.classList.remove('on'),1600)};
 
-/* hero: cycle WSS Harbour > tour dance > presenter > H&R Block */
-(function(){const L=['hosh3','tour-mambo2','paramount','hrb'];let k=0;const A=$('#heroA'),B=$('#heroB');let cur=A,nxt=B;
+/* hero: cycle WSS Harbour > tour dance > presenter > Ozark > H&R Block */
+(function(){const L=['hosh3','tour-mambo2','paramount','ozark-hero','hrb'];let k=0;const A=$('#heroA'),B=$('#heroB');let cur=A,nxt=B;
  function next(){k=(k+1)%L.length;nxt.src=`video-${L[k]}.mp4`;nxt.currentTime=0;const p=nxt.play();(p&&p.then?p:Promise.resolve()).then(()=>{nxt.classList.add('on');cur.classList.remove('on');const o=cur;cur=nxt;nxt=o;setTimeout(()=>o.pause(),900)}).catch(()=>{})}
  [A,B].forEach(v=>v.addEventListener('ended',()=>{if(v===cur)next()}));
  A.play().catch(()=>{});
