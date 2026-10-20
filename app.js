@@ -45,7 +45,7 @@ const SHIPS=[
  {ship:'Ovation of the Seas',role:'Singer (B3)',shows:'The Beautiful Dream, Live Love Legs'}];
 const SCREEN=[
  {t:'Paramount',k:'Presenter',logo:'logo-paramount.svg',inv:1,video:'video-paramount.mp4',poster:'video-paramount.jpg',
-  p:'Presenting for Paramount Australia (ParamountAU) on Teenage Mutant Ninja Turtles: Mutant Mayhem, on set with the Turtles themselves.',
+  p:'Presenting Movie Scoop for Paramount Australia (ParamountAU), on set with the Teenage Mutant Ninja Turtles.',
   mini:[['img-paramount-turtles.jpg','With the Turtles on set'],['img-paramount-turtles2.jpg','On set with the Turtles'],['img-paramount-set.jpg','The studio']]},
  {t:'Ladbrokes',k:'Featured extra',logo:'logo-ladbrokes-white.png',video:'video-ladbrokes2.mp4',poster:'video-ladbrokes2.jpg',
   p:'Featured as the greyhound in the Ladbrokes TV commercial starring Mark Wahlberg.'},
@@ -91,7 +91,7 @@ const CREDITS=[
  ['Sequins and Feathers, Sonic Odyssey','Singer (B3)','Royal Caribbean · Quantum of the Seas','Stage'],
  ['The Beautiful Dream, Live Love Legs','Singer (B3)','Royal Caribbean · Ovation of the Seas','Stage'],
  ['Amade, Rock City, Broken Strings','Singer & dancer','Celebrity Cruises · Celebrity Solstice','Stage'],
- ['Teenage Mutant Ninja Turtles: Mutant Mayhem','Presenter','Paramount (ParamountAU)','Screen'],
+ ['Movie Scoop: Paramount','Presenter','Paramount (ParamountAU)','Screen'],
  ['Ladbrokes TVC, with Mark Wahlberg','Featured extra','Ladbrokes','Screen'],
  ['CC’s TVC','Hero','Snackbrands','Screen'],
  ['I’m A Celebrity… Get Me Out Of Here! TVC','Dancer','ITV Studios · Channel 10','Screen'],
@@ -101,9 +101,9 @@ const CREDITS=[
  ['Aquarius “All Day Long” TVC','Featured dancer','Coca-Cola Japan','Screen'],
  ['Toyota RAV4 TVC','Featured extra','Toyota','Screen'],
  ['Dulux and more','TVCs','Various','Screen'],
- ['Certificate III in Theatre and Screen','Graduate','ACTT','Training'],
- ['Certificate IV in Dance','Graduate','Village Nation (Village on Broadway)','Training'],
- ['Diploma of Musical Theatre','Graduate','Village Nation (Village on Broadway)','Training']];
+ ['Certificate III in Theatre and Screen','Graduate','ACTT','Certification'],
+ ['Certificate IV in Dance','Graduate','Village Nation (Village on Broadway)','Certification'],
+ ['Diploma of Musical Theatre','Graduate','Village Nation (Village on Broadway)','Certification']];
 const THEATRE_LOGOS=[['logo-hosh-wss-white.png','West Side Story, Handa Opera on Sydney Harbour'],['logo-wss-tour-black.png','West Side Story, Aus/NZ tour'],['logo-uss.png','Universal Studios Singapore',1],['logo-celebrity.svg','Celebrity Cruises'],['logo-royal-caribbean.svg','Royal Caribbean International']];
 const SCREEN_LOGOS=[['logo-paramount.svg','Paramount'],['logo-netflix.svg','Netflix'],['logo-imaceleb.jpg','I’m A Celebrity… Get Me Out Of Here!',1],['logo-network10.svg','Network 10'],['logo-itv-studios.svg','ITV Studios'],['logo-hrblock.svg','H&R Block'],['logo-kfc.svg','KFC'],['logo-toyota.svg','Toyota'],['logo-aquarius.svg','Aquarius'],['logo-ladbrokes-white.png','Ladbrokes'],['logo-ccs-white.png','CC’s']];
 /* lightbox */
@@ -160,7 +160,7 @@ $('#screenGrid').innerHTML=SCREEN.map(s=>`<div class="sc rv"><div class="m"><vid
 $$('#screenGrid .sc').forEach((c,i)=>{const s=SCREEN[i],g='sc'+i,m=$('.m',c);bindLB(m,g,{t:'v',src:s.video,poster:s.poster,cap:s.t,sub:s.k});
  (s.mini||[]).forEach((mm,j)=>bindLB($$('.mini button',c)[j],g,{src:mm[0],cap:mm[1]}));hoverPlay(c,$('video',m))});
 /* credits */
-const TYPES=['All','Stage','Screen','Training'];let ft='All';
+const TYPES=['All','Stage','Screen','Certification'];let ft='All';
 $('#cfilter').innerHTML=TYPES.map((t,i)=>`<button class="tab ${i?'':'on'}" data-t="${t}">${t}<span class="y">${t==='All'?CREDITS.length:CREDITS.filter(c=>c[3]===t).length}</span></button>`).join('');
 function drawCredits(){const q=$('#csearch').value.trim().toLowerCase();
  const rows=CREDITS.filter(c=>(ft==='All'||c[3]===ft)&&(!q||c.join(' ').toLowerCase().includes(q)));
