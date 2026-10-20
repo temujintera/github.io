@@ -63,7 +63,7 @@ const SCREEN=[
   p:'In the KFC “New Girl” TV commercial: that’s me in the back of the crowd in the sombrero, and again in the final shot.'}];
 const REEL=[
  {g:'Musical theatre',items:[
-  {src:'bernardo',t:'Bernardo',s:'West Side Story · Footage: @sydneyweekender'},
+  {src:'bernardo',t:'Bernardo',s:'West Side Story · Footage: @sydneyweekender',tall:1},
   {src:'tour-mambo2',t:'The tour',s:'West Side Story Aus/NZ · media call'},
   {src:'hosh3',t:'Sydney Harbour',s:'West Side Story · 2024'}]},
  {g:'Presenting',items:[
@@ -128,7 +128,7 @@ $('#yr').textContent=new Date().getFullYear();
 const logoRow=L=>{const h=L.map(([src,alt,badge])=>`<img src="${src}" alt="${alt}" title="${alt}" class="${badge?'badge':''}" loading="lazy">`).join('');return h+h+h+h};
 $('#trackTheatre').innerHTML=logoRow(THEATRE_LOGOS);$('#trackScreen').innerHTML=logoRow(SCREEN_LOGOS);
 $$('.trio button').forEach(b=>bindLB(b,'about',{src:b.dataset.src,cap:b.dataset.cap}));
-$('#reelGrid').innerHTML=REEL.map(G=>`<div class="rgroup rv"><div class="rhead"><h3 class="disp">${G.g}</h3><span>${G.items.length} ${G.items.length>1?'clips':'clip'}</span></div><div class="rgrid">${G.items.map(r=>`<div class="vcard" data-src="${r.src}">${G.still?`<img src="video-${r.src}.jpg" alt="${r.t}" loading="lazy">`:`<video muted loop playsinline preload="none" poster="video-${r.src}.jpg" src="video-${r.src}.mp4"></video>`}<div class="play">▶</div><div class="cap"><b>${r.t}</b><small>${r.s}</small></div></div>`).join('')}</div></div>`).join('');
+$('#reelGrid').innerHTML=REEL.map(G=>`<div class="rgroup rv"><div class="rhead"><h3 class="disp">${G.g}</h3><span>${G.items.length} ${G.items.length>1?'clips':'clip'}</span></div><div class="rgrid">${G.items.map(r=>`<div class="vcard${r.tall?' tall':''}" data-src="${r.src}">${r.tall?`<img class="tallbg" src="video-${r.src}.jpg" alt="">`:''}${G.still?`<img src="video-${r.src}.jpg" alt="${r.t}" loading="lazy">`:`<video muted loop playsinline preload="none" poster="video-${r.src}.jpg" src="video-${r.src}.mp4"></video>`}<div class="play">▶</div><div class="cap"><b>${r.t}</b><small>${r.s}</small></div></div>`).join('')}</div></div>`).join('');
 $$('#reelGrid .vcard').forEach(c=>{const r=REEL.flatMap(G=>G.items).find(x=>x.src===c.dataset.src);bindLB(c,'reel',{t:'v',src:`video-${r.src}.mp4`,poster:`video-${r.src}.jpg`,cap:r.t,sub:r.s});const v=$('video',c);if(v)hoverPlay(c,v)});
 $('#tabs').innerHTML=CHAPTERS.map((c,i)=>`<button class="tab ${i?'':'on'}" data-i="${i}">${c.tab}${c.year?`<span class="y">${c.year}</span>`:''}</button>`).join('');
 $('#chapters').innerHTML=CHAPTERS.map((c,i)=>`<article class="chapter ${i?'':'on'}" id="ch-${c.id}"><div>${c.video?`<div class="stagev"><video muted loop playsinline ${i?'':'autoplay'} preload="metadata" poster="${c.poster}" src="${c.video}"></video><span class="expand">⤢ Expand</span></div>`
