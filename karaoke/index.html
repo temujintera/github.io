@@ -16,7 +16,7 @@
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="karaoke.css?v=1">
+<link rel="stylesheet" href="karaoke.css?v=2">
 </head>
 <body>
 
@@ -113,6 +113,7 @@
         <button type="button" data-kind="karaoke" class="on">Karaoke</button>
         <button type="button" data-kind="instrumental">Instrumental</button>
         <button type="button" data-kind="">Original</button>
+        <button type="button" data-kind="lower">Lower key</button>
       </div>
       <ul class="yt-results" id="ytResults" hidden></ul>
       <div class="yt-manual" id="ytManual">
@@ -186,6 +187,14 @@
       <span class="k-label">Vocals <b id="vocalVal">Off</b></span>
       <input type="range" id="vocal" min="0" max="100" value="0" aria-label="Guide vocal level">
     </label>
+    <div class="knob key" id="keyKnob">
+      <span class="k-label">Key <b id="keyVal">Original</b> <i class="k-status" id="keyStatus"></i></span>
+      <div class="nudge">
+        <button type="button" class="pill small" id="keyDown" title="Lower the key one semitone">♭ Lower</button>
+        <button type="button" class="pill small" id="keyUp" title="Raise the key one semitone">Higher ♯</button>
+        <button type="button" class="pill small hot" id="voiceBtn">Voice: <span id="voiceName">Any</span></button>
+      </div>
+    </div>
     <div class="knob timing">
       <span class="k-label">Lyrics timing <b id="offVal">0.0s</b></span>
       <div class="nudge">
@@ -266,6 +275,21 @@
   </div>
 </div>
 
+<div class="sheet" id="voiceSheet" hidden>
+  <div class="sheet-card" role="dialog" aria-labelledby="voiceTitle">
+    <button class="icon-btn sheet-x" data-close aria-label="Close"><svg viewBox="0 0 24 24" width="22" height="22"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></button>
+    <div class="eyebrow">Your range</div>
+    <h2 class="disp" id="voiceTitle">Fit to your voice</h2>
+    <p class="mute" id="melodyInfo"></p>
+    <h3 class="label">Male voices</h3>
+    <div class="voices" id="voicesMale"></div>
+    <h3 class="label">Female voices</h3>
+    <div class="voices" id="voicesFemale"></div>
+    <button type="button" class="btn block" id="voiceNone" style="margin-top:18px">Original key: don't change songs</button>
+    <p class="mute small" style="margin-top:12px">Your voice is remembered: every song file you load moves into your range automatically. You can still fine-tune with Lower / Higher. Men singing a woman's song (and vice versa) usually sing it an octave apart. The app takes that into account and picks the smallest change.</p>
+  </div>
+</div>
+
 <div class="sheet" id="settings" hidden>
   <div class="sheet-card" role="dialog" aria-labelledby="setTitle">
     <button class="icon-btn sheet-x" data-close aria-label="Close"><svg viewBox="0 0 24 24" width="22" height="22"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></button>
@@ -303,6 +327,6 @@
 <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 <audio id="previewAudio" preload="none"></audio>
 
-<script src="karaoke.js?v=1"></script>
+<script src="karaoke.js?v=2"></script>
 </body>
 </html>

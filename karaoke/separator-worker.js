@@ -169,6 +169,67 @@ function separate(L, R, sr, opts, onProgress) {
   return { instL, instR };
 }
 
+
+/**
+ * Estimate the sung melody's range from the vocal stem (YIN pitch tracking on
+ * loud frames). Returns MIDI note numbers {lo, mid, hi} or null.
+ */
+function melodyRange(VL, VR, sr) {
+  const D = Math.max(1, Math.round(sr / 11025)), fs = sr / D;
+  const n = Math.floor(VL.length / D);
+  const x = new Float32Array(n);
+  for (let i = 0; i < n; i++) {
+    let s = 0;
+    for (let j = 0; j < D; j++) s += VL[i * D + j] + VR[i * D + j];
+    x[i] = s / (2 * D);
+  }
+  const W = 512, hop = 441, minLag = Math.floor(fs / 1000), maxLag = Math.ceil(fs / 75);
+  const frames = [];
+  for (let p = 0; p + W + maxLag < n; p += hop) {
+    let e = 0;
+    for (let i = 0; i < W; i++) e += x[p + i] * x[p + i];
+    frames.push({ p, e });
+  }
+  if (frames.length < 20) return null;
+  const energies = frames.map((f) => f.e).sort((a, b) => a - b);
+  const gate = energies[Math.floor(energies.length * 0.9)] * 0.15;
+  const d = new Float64Array(maxLag + 1);
+  const notes = [];
+  for (const f of frames) {
+    if (f.e < gate) continue;
+    const p = f.p;
+    for (let tau = 1; tau <= maxLag; tau++) {
+      let s = 0;
+      for (let i = 0; i < W; i++) { const v = x[p + i] - x[p + i + tau]; s += v * v; }
+      d[tau] = s;
+    }
+    let run = 0, tau = -1;
+    for (let t = 1; t <= maxLag; t++) {
+      run += d[t];
+      const c = run > 0 ? (d[t] * t) / run : 1;
+      if (t >= minLag && c < 0.15) {
+        // walk to the local minimum
+        let best = t, bc = c, rr = run;
+        for (let u = t + 1; u <= maxLag; u++) {
+          rr += d[u];
+          const cu = (d[u] * u) / rr;
+          if (cu < bc) { bc = cu; best = u; } else break;
+        }
+        tau = best;
+        break;
+      }
+    }
+    if (tau > 0) {
+      const hz = fs / tau;
+      if (hz >= 75 && hz <= 1000) notes.push(69 + 12 * Math.log2(hz / 440));
+    }
+  }
+  if (notes.length < 30) return null;
+  notes.sort((a, b) => a - b);
+  const q = (v) => notes[Math.floor(v * (notes.length - 1))];
+  return { lo: q(0.1), mid: q(0.5), hi: q(0.9), n: notes.length };
+}
+
 if (typeof self !== 'undefined' && typeof self.postMessage === 'function') {
   self.onmessage = (e) => {
     const { L, R, sampleRate, opts } = e.data;
@@ -179,8 +240,10 @@ if (typeof self !== 'undefined' && typeof self.postMessage === 'function') {
       }
       const t = Date.now();
       const { instL, instR } = separate(L, R, sampleRate, opts || {}, (p) => self.postMessage({ type: 'progress', p }));
+      let range = null;
+      try { range = melodyRange(L, R, sampleRate); } catch (e) { /* optional */ }
       self.postMessage(
-        { type: 'done', instL, instR, vocL: L, vocR: R, ms: Date.now() - t },
+        { type: 'done', instL, instR, vocL: L, vocR: R, range, ms: Date.now() - t },
         [instL.buffer, instR.buffer, L.buffer, R.buffer]
       );
     } catch (err) {
@@ -189,4 +252,4 @@ if (typeof self !== 'undefined' && typeof self.postMessage === 'function') {
   };
 }
 
-if (typeof module !== 'undefined') module.exports = { separate, isMono, makeFFT };
+if (typeof module !== 'undefined') module.exports = { separate, isMono, makeFFT, melodyRange };

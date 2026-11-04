@@ -267,7 +267,7 @@ function unlockAudio() {
 
 function runSeparator(L, R, sampleRate, strength, onProgress) {
   return new Promise((resolve, reject) => {
-    const w = new Worker('separator-worker.js?v=1');
+    const w = new Worker('separator-worker.js?v=2');
     w.onmessage = (e) => {
       const d = e.data;
       if (d.type === 'progress') onProgress(d.p);
@@ -283,6 +283,7 @@ class FileEngine {
     this.kind = 'file';
     this.canVocal = true;
     this.pos = 0; this.playing = false; this.duration = 0; this.vocal = 0;
+    this.key = 0; this.range = null; this.job = null;
     const ctx = getCtx();
     this.gI = ctx.createGain(); this.gV = ctx.createGain();
     this.gI.connect(ctx.destination); this.gV.connect(ctx.destination);
@@ -305,11 +306,66 @@ class FileEngine {
       B.copyToChannel(a, 0); B.copyToChannel(b, 1);
       return B;
     };
-    this.inst = mk(r.instL, r.instR);
-    this.voc = mk(r.vocL, r.vocR);
+    this.inst = this.baseInst = mk(r.instL, r.instR);
+    this.voc = this.baseVoc = mk(r.vocL, r.vocR);
+    this.range = r.range || null;
     return { ms: r.ms };
   }
-  mono(buf) { this.inst = buf; this.voc = null; this.canVocal = false; }
+  mono(buf) { this.inst = this.baseInst = buf; this.voc = this.baseVoc = null; this.canVocal = false; }
+  swapBuffers(inst, voc) {
+    const was = this.playing, pos = this.currentTime;
+    if (was) { this.stopSources(); this.playing = false; }
+    this.inst = inst; this.voc = voc; this.pos = pos;
+    if (was) this.play();
+  }
+  /** Change key by `semi` semitones from the original. Resolves true once the music is in the new key. */
+  async setKey(semi, onProgress) {
+    semi = clamp(Math.round(semi), -12, 12);
+    const hadJob = !!this.job;
+    if (this.job) { this.job.cancel(); this.job = null; }
+    if (semi === this.key && !hadJob && (semi === 0 || this.inst !== this.baseInst)) return true;
+    this.key = semi;
+    if (!semi) { this.swapBuffers(this.baseInst, this.baseVoc); return true; }
+    const job = { cancelled: false, workers: [] };
+    job.cancel = () => { job.cancelled = true; job.workers.forEach((w) => w.terminate()); };
+    this.job = job;
+    const shift = (buf, prog) => new Promise((resolve, reject) => {
+      const w = new Worker('pitch-worker.js?v=1');
+      job.workers.push(w);
+      w.onmessage = (e) => {
+        const d = e.data;
+        if (d.type === 'progress') { if (prog) prog(d.p); return; }
+        w.terminate();
+        if (d.type === 'done') {
+          const B = getCtx().createBuffer(2, d.L.length, buf.sampleRate);
+          B.copyToChannel(d.L, 0); B.copyToChannel(d.R, 1);
+          resolve(B);
+        } else reject(new Error(d.message));
+      };
+      w.onerror = (e) => { w.terminate(); reject(new Error(e.message || 'Key change failed')); };
+      const L = buf.getChannelData(0).slice(), R = buf.getChannelData(buf.numberOfChannels > 1 ? 1 : 0).slice();
+      w.postMessage({ L, R, sampleRate: buf.sampleRate, semitones: semi }, [L.buffer, R.buffer]);
+    });
+    // Pause, drop the previous re-keyed copy, re-key the band first and resume;
+    // the guide vocal follows in the background.
+    const wasPlaying = this.playing;
+    this.pause();
+    this.inst = this.baseInst; this.voc = this.baseVoc;
+    let inst;
+    try { inst = await shift(this.baseInst, onProgress); } catch (err) { if (job.cancelled) return false; this.job = null; this.key = 0; throw err; }
+    if (job.cancelled) return false;
+    this.inst = inst;
+    this.voc = null;
+    if (wasPlaying) this.play();
+    if (this.baseVoc) {
+      shift(this.baseVoc).then((voc) => {
+        if (job.cancelled || this.job !== job) return;
+        this.job = null;
+        this.swapBuffers(this.inst, voc);
+      }).catch(() => { if (this.job === job) this.job = null; });
+    } else this.job = null;
+    return true;
+  }
   play() {
     if (this.playing || !this.inst) return;
     const ctx = getCtx();
@@ -348,7 +404,11 @@ class FileEngine {
     const ctx = getCtx();
     this.gV.gain.setTargetAtTime(v, ctx.currentTime, 0.04);
   }
-  destroy() { this.pause(); this.gI.disconnect(); this.gV.disconnect(); this.inst = this.voc = null; }
+  destroy() {
+    if (this.job) { this.job.cancel(); this.job = null; }
+    this.pause(); this.gI.disconnect(); this.gV.disconnect();
+    this.inst = this.voc = this.baseInst = this.baseVoc = null;
+  }
 }
 
 let ytApi;
@@ -495,6 +555,32 @@ const DB = (() => {
   };
 })();
 
+/* ------------------------------------------------------------------ voices & keys */
+// Comfortable singing ranges (MIDI note numbers).
+const VOICES = [
+  { id: 'bass', name: 'Bass', lo: 40, hi: 60, group: 'male' },
+  { id: 'baritone', name: 'Baritone', lo: 45, hi: 65, group: 'male' },
+  { id: 'tenor', name: 'Tenor', lo: 48, hi: 69, group: 'male' },
+  { id: 'alto', name: 'Alto', lo: 53, hi: 74, group: 'female' },
+  { id: 'mezzo', name: 'Mezzo', lo: 57, hi: 77, group: 'female' },
+  { id: 'soprano', name: 'Soprano', lo: 60, hi: 81, group: 'female' },
+];
+const NOTE_NAMES = ['C', 'C♯', 'D', 'E♭', 'E', 'F', 'F♯', 'G', 'A♭', 'A', 'B♭', 'B'];
+const noteName = (m) => { m = Math.round(m); return NOTE_NAMES[((m % 12) + 12) % 12] + (Math.floor(m / 12) - 1); };
+/** Smallest key change (−6…+5) that puts the melody in the voice's range, singing in whichever octave suits. */
+function fitKey(range, voice) {
+  if (!range || !voice) return null;
+  const songMid = (range.lo + range.hi) / 2, voiceMid = (voice.lo + voice.hi) / 2;
+  const diff = Math.round(voiceMid - songMid);
+  const shift = ((((diff % 12) + 18) % 12) - 6);
+  const octaves = Math.round((voiceMid - (songMid + shift)) / 12); // >0 sing higher, <0 sing lower
+  return { shift, octaves };
+}
+const keyText = (k) => (!k ? 'Original' : (k > 0 ? '+' : '−') + Math.abs(k));
+function octaveText(o) {
+  return o < 0 ? (o === -1 ? ' (sing it an octave lower)' : ' (sing it two octaves lower)') : o > 0 ? (o === 1 ? ' (sing it an octave higher)' : ' (sing it two octaves higher)') : '';
+}
+
 /* ------------------------------------------------------------------ app state */
 const S = {
   song: null,
@@ -503,6 +589,7 @@ const S = {
   engine: null, source: null,
   offset: 0, vocal: store.get('vocal', 0), strength: store.get('strength', 0.85),
   syncMode: false, tvOn: false, pendingFile: null, ytKind: 'karaoke',
+  voice: store.get('voice', ''), keyTarget: 0, savedKey: null,
 };
 
 /* ------------------------------------------------------------------ phone lyrics view */
@@ -772,6 +859,7 @@ async function saveRecord() {
     song: S.song,
     lyric: S.lyric ? { id: S.lyric.id, trackName: S.lyric.trackName, artistName: S.lyric.artistName, duration: S.lyric.duration, syncedLyrics: S.lyric.syncedLyrics || null, plainLyrics: S.lyric.plainLyrics || null } : null,
     offset: S.offset,
+    key: S.engine && S.engine.kind === 'file' ? S.engine.key : S.savedKey,
     source: S.source,
     updated: Date.now(),
   };
@@ -840,6 +928,10 @@ function refineLyricsForDuration(dur) {
 function ytQuery() {
   const s = S.song;
   const base = `${cleanTitle(s.title)} ${mainArtist(s.artist)}`.trim();
+  if (S.ytKind === 'lower') {
+    const v = VOICES.find((x) => x.id === S.voice);
+    return base + ' karaoke lower key' + (v && v.group === 'male' ? ' male' : '');
+  }
   return S.ytKind === 'karaoke' ? base + ' karaoke' : S.ytKind === 'instrumental' ? base + ' instrumental' : base + ' official audio';
 }
 async function refreshYT() {
@@ -879,6 +971,8 @@ async function openSong(song, rec) {
   resetEngine();
   S.song = song; S.source = null; S.syncMode = false;
   S.offset = rec && typeof rec.offset === 'number' ? rec.offset : 0;
+  S.savedKey = rec && typeof rec.key === 'number' ? rec.key : null;
+  S.keyTarget = 0;
   $('#songTitle').textContent = song.title;
   $('#songSub').textContent = [song.artist, song.album, song.duration ? fmt(song.duration) : ''].filter(Boolean).join(' · ');
   const art = $('#songArt');
@@ -948,6 +1042,7 @@ async function loadFile(file, name) {
     if (info.mono) toast("This file is mono, so the vocals can't be separated. Playing it as is.");
     else console.info('Vocal removal took', Math.round(performance.now() - t0), 'ms');
     refineLyricsForDuration(eng.duration);
+    autoKey(eng);
     saveRecord().then(renderLibrary);
   } catch (e) {
     eng.destroy();
@@ -1001,6 +1096,10 @@ function setEngine(eng) {
   $('#vocal').disabled = !eng.canVocal;
   if (eng.canVocal) eng.setVocal(S.vocal);
   updateVocalLabel();
+  S.keyTarget = eng.kind === 'file' ? eng.key : 0;
+  $('#keyKnob').classList.toggle('disabled', eng.kind !== 'file');
+  setKeyStatus('');
+  updateKeyLabel();
   LV.render();
   TV.setSong(S.song, S.lines, S.synced);
   bcSong(); bcTick();
@@ -1014,6 +1113,103 @@ function showSourcePicker() {
   $('#sourcePick').hidden = false;
   $('#player').hidden = true;
   $('#processing').hidden = true;
+}
+
+/* ------------------------------------------------------------------ key */
+function updateKeyLabel() {
+  $('#keyVal').textContent = keyText(S.keyTarget);
+  const v = VOICES.find((x) => x.id === S.voice);
+  $('#voiceName').textContent = v ? v.name : 'Any';
+}
+function setKeyStatus(t) { $('#keyStatus').textContent = t; }
+function ytKeyHint() {
+  toast("A YouTube video's sound can't be re-keyed. Find a lower-key karaoke version instead.", {
+    label: 'Find one',
+    fn: () => {
+      showSourcePicker();
+      S.ytKind = 'lower';
+      $$('#ytKind button').forEach((x) => x.classList.toggle('on', x.dataset.kind === 'lower'));
+      refreshYT();
+      $('#ytCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    },
+  });
+}
+let keyTimer;
+function requestKey(semi, msg) {
+  const e = S.engine;
+  if (!e) return;
+  if (e.kind !== 'file') { ytKeyHint(); return; }
+  S.keyTarget = clamp(Math.round(semi), -12, 12);
+  updateKeyLabel();
+  setKeyStatus(S.keyTarget === e.key ? '' : 'getting ready…');
+  clearTimeout(keyTimer);
+  keyTimer = setTimeout(() => applyKey(S.keyTarget, msg), msg ? 0 : 650);
+}
+async function applyKey(semi, msg) {
+  const e = S.engine;
+  if (!e || e.kind !== 'file') return;
+  if (semi === e.key && !e.job) { setKeyStatus(''); return; }
+  setKeyStatus(semi ? 'changing… 0%' : '');
+  try {
+    const ok = await e.setKey(semi, (p) => { if (S.engine === e && S.keyTarget === semi) setKeyStatus(`changing… ${Math.round(p * 100)}%`); });
+    if (!ok || S.engine !== e) return;
+    setKeyStatus('');
+    S.savedKey = semi;
+    saveSoon();
+    if (msg) toast(msg);
+    if (Math.abs(semi) > 7) toast('Big key changes can sound a little artificial. Within ±5 sounds most natural.');
+  } catch (err) {
+    if (S.engine !== e) return;
+    S.keyTarget = 0; updateKeyLabel(); setKeyStatus('');
+    toast("Couldn't change the key: " + err.message);
+  }
+}
+/** After a file loads: restore this song's key, or fit it to the chosen voice. */
+function autoKey(eng) {
+  if (S.savedKey != null) {
+    if (S.savedKey) requestKey(S.savedKey, `Key ${keyText(S.savedKey)}, as you had it last time.`);
+    return;
+  }
+  const v = VOICES.find((x) => x.id === S.voice);
+  if (!v) return;
+  const fit = fitKey(eng.range, v);
+  if (!fit) { toast(`Couldn't read this song's melody, so it's in the original key. Use Lower / Higher to suit your ${v.name.toLowerCase()} voice.`); return; }
+  if (!fit.shift) { toast(`Already a good key for your ${v.name.toLowerCase()} voice${octaveText(fit.octaves)}.`); return; }
+  requestKey(fit.shift, `Moved ${fit.shift < 0 ? 'down' : 'up'} ${Math.abs(fit.shift)} to suit your ${v.name.toLowerCase()} voice${octaveText(fit.octaves)}.`);
+}
+function renderVoices() {
+  const e = S.engine;
+  const range = e && e.kind === 'file' ? e.range : null;
+  $('#melodyInfo').textContent = range
+    ? `This song's melody sits around ${noteName(range.lo) === noteName(range.hi) ? noteName(range.lo) : noteName(range.lo) + '–' + noteName(range.hi)}. Pick your voice and the key moves to suit it.`
+    : e && e.kind === 'youtube'
+      ? "Key changes need a song file. A YouTube video's sound can't be changed, but your voice is saved for the songs you load as files."
+      : 'Pick your voice. Every song file you load will be moved into your range.';
+  for (const group of ['male', 'female']) {
+    $(group === 'male' ? '#voicesMale' : '#voicesFemale').innerHTML = VOICES.filter((v) => v.group === group).map((v) => {
+      const fit = fitKey(range, v);
+      const hint = fit ? (fit.shift ? `${fit.shift < 0 ? '♭ down' : '♯ up'} ${Math.abs(fit.shift)}` : 'no change') : '';
+      return `<button type="button" class="voice${S.voice === v.id ? ' on' : ''}" data-voice="${v.id}"><b>${v.name}</b><span>${noteName(v.lo)}–${noteName(v.hi)}</span>${hint ? `<em>${hint}</em>` : ''}</button>`;
+    }).join('');
+  }
+}
+function chooseVoice(id) {
+  S.voice = id;
+  store.set('voice', id);
+  $('#voiceSheet').hidden = true;
+  updateKeyLabel();
+  const e = S.engine;
+  const v = VOICES.find((x) => x.id === id);
+  if (!v) {
+    if (e && e.kind === 'file' && S.keyTarget) requestKey(0, 'Back to the original key.');
+    else toast('Songs will stay in their original key.');
+    return;
+  }
+  if (!e || e.kind !== 'file') { toast(`Saved: ${v.name}. Song files you load will be fitted to your range.`); return; }
+  const fit = fitKey(e.range, v);
+  if (!fit) { toast("Couldn't read this song's melody. Use Lower / Higher by ear."); return; }
+  if (fit.shift === S.keyTarget) { toast(`Already in a good key for ${v.name.toLowerCase()}${octaveText(fit.octaves)}.`); return; }
+  requestKey(fit.shift, fit.shift ? `Moved ${fit.shift < 0 ? 'down' : 'up'} ${Math.abs(fit.shift)} for ${v.name.toLowerCase()}${octaveText(fit.octaves)}.` : `Original key suits ${v.name.toLowerCase()}${octaveText(fit.octaves)}.`);
 }
 
 /* ------------------------------------------------------------------ transport */
@@ -1262,6 +1458,11 @@ function initController() {
   $('#offMinus').onclick = () => setOffset(S.offset - 0.25);
   $('#offPlus').onclick = () => setOffset(S.offset + 0.25);
   $('#syncBtn').onclick = () => setSyncMode(!S.syncMode);
+  $('#keyDown').onclick = () => requestKey(S.keyTarget - 1);
+  $('#keyUp').onclick = () => requestKey(S.keyTarget + 1);
+  $('#voiceBtn').onclick = () => { renderVoices(); $('#voiceSheet').hidden = false; };
+  $('#voiceSheet').addEventListener('click', (e) => { const b = e.target.closest('[data-voice]'); if (b) chooseVoice(b.dataset.voice); });
+  $('#voiceNone').onclick = () => chooseVoice('');
   $('#syncDone').onclick = () => setSyncMode(false);
   $('#lyrics').addEventListener('click', (e) => {
     const ly = e.target.closest('.ly[data-i]');
@@ -1304,6 +1505,8 @@ function initController() {
     else if (e.key === 'ArrowRight') { e.preventDefault(); seekBy(5); }
     else if (e.key === '[') setOffset(S.offset - 0.25);
     else if (e.key === ']') setOffset(S.offset + 0.25);
+    else if (e.key === '-') requestKey(S.keyTarget - 1);
+    else if (e.key === '=' || e.key === '+') requestKey(S.keyTarget + 1);
     else if (e.key === 't' || e.key === 'f') { if (S.tvOn) exitTV(); else enterTV(); }
     else if (e.key === 'Escape' && S.tvOn) exitTV();
     if (S.tvOn) tvPoke();
@@ -1389,5 +1592,5 @@ if (IS_RECEIVER) startReceiver();
 else initController();
 
 // test hooks
-window.__karaoke = { S, parseLRC, timeLines, cleanTitle, mainArtist, ytId, scoreLyric, lineIndexAt, openSong, loadFile, TV };
+window.__karaoke = { S, fitKey, VOICES, parseLRC, timeLines, cleanTitle, mainArtist, ytId, scoreLyric, lineIndexAt, openSong, loadFile, TV };
 })();
