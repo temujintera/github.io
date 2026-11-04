@@ -1,0 +1,308 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Karaoke</title>
+<meta name="description" content="Type a song, strip the vocals, sing along with synced lyrics — and put it on the TV.">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#0b0a0c">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Karaoke">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="karaoke.css?v=1">
+</head>
+<body>
+
+<header class="bar">
+  <button class="icon-btn" id="backBtn" aria-label="Back" hidden>
+    <svg viewBox="0 0 24 24" width="22" height="22"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </button>
+  <a class="brand" href="./" id="brand">KARAOKE<span>.</span></a>
+  <div class="bar-right">
+    <button class="pill" id="tvHelpBtn">
+      <svg viewBox="0 0 24 24" width="18" height="18"><path d="M5 17H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-1M12 15l5 6H7z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+      <span>On the TV</span>
+    </button>
+    <button class="icon-btn" id="settingsBtn" aria-label="Settings">
+      <svg viewBox="0 0 24 24" width="21" height="21"><circle cx="12" cy="12" r="3.2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
+    </button>
+  </div>
+</header>
+
+<!-- ========== HOME ========== -->
+<main id="home" class="view">
+  <section class="hero">
+    <div class="eyebrow">Type it · Strip it · Sing it</div>
+    <h1 class="disp">What do you<br>want to <span class="r">sing?</span></h1>
+    <form class="search" id="searchForm" autocomplete="off">
+      <svg class="search-ic" viewBox="0 0 24 24" width="22" height="22"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M20 20l-3.5-3.5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
+      <input id="q" type="search" enterkeyhint="search" placeholder="Song title, artist…" aria-label="Search for a song">
+      <button class="btn red" type="submit">Search</button>
+    </form>
+  </section>
+
+  <section id="resultsWrap" hidden>
+    <div class="sec-head"><h2>Results</h2><span class="mute small" id="resultsNote"></span></div>
+    <ul class="results" id="results"></ul>
+  </section>
+
+  <section id="libraryWrap" hidden>
+    <div class="sec-head"><h2>My songs</h2><span class="mute small">Saved on this device</span></div>
+    <ul class="results" id="library"></ul>
+  </section>
+
+  <section class="how">
+    <div class="how-step"><b>1</b><span>Search and pick the song: synced lyrics load automatically.</span></div>
+    <div class="how-step"><b>2</b><span>Add the music: your own song file (vocals stripped here) or a karaoke version from YouTube.</span></div>
+    <div class="how-step"><b>3</b><span>Tap <em>TV mode</em> and AirPlay it: big lyrics on the telly.</span></div>
+  </section>
+</main>
+
+<!-- ========== SONG ========== -->
+<main id="song" class="view" hidden>
+  <section class="song-head">
+    <div class="art" id="songArt"></div>
+    <div class="song-meta">
+      <h1 id="songTitle"></h1>
+      <p id="songSub" class="mute"></p>
+      <div class="chips">
+        <button class="chip" id="lyricsChip" type="button"></button>
+        <button class="chip ghost" id="previewBtn" type="button" hidden>▶ 30s preview</button>
+        <button class="chip ghost" id="changeMusicBtn" type="button" hidden>Change music</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- music source chooser -->
+  <section id="sourcePick" class="sources">
+    <h2 class="label">Add the music</h2>
+
+    <div class="card source" id="fileCard">
+      <div class="source-top">
+        <div class="source-ic">
+          <svg viewBox="0 0 24 24" width="24" height="24"><path d="M9 18V5l12-2v13" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><circle cx="6" cy="18" r="3" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="18" cy="16" r="3" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+        </div>
+        <div>
+          <h3>Use your copy of the song</h3>
+          <p class="mute">MP3, M4A or WAV from your Files. The vocals are stripped right here on your device, and you can fade them back in.</p>
+        </div>
+      </div>
+      <label class="btn red block" for="fileInput">Choose song file</label>
+      <input id="fileInput" type="file" accept="audio/*,.mp3,.m4a,.aac,.wav,.flac,.ogg" hidden>
+      <p class="drop-hint mute small">…or drop a file anywhere on this page</p>
+    </div>
+
+    <div class="card source" id="ytCard">
+      <div class="source-top">
+        <div class="source-ic yt">
+          <svg viewBox="0 0 24 24" width="24" height="24"><rect x="2" y="5" width="20" height="14" rx="4" fill="none" stroke="currentColor" stroke-width="2"/><path d="M10 9l5 3-5 3z" fill="currentColor"/></svg>
+        </div>
+        <div>
+          <h3>Play a karaoke version from YouTube</h3>
+          <p class="mute">Full song, no file needed. Pick a <em>karaoke</em> or <em>instrumental</em> upload. The lyrics follow along, and you can nudge them into time.</p>
+        </div>
+      </div>
+      <div class="seg" id="ytKind" role="tablist">
+        <button type="button" data-kind="karaoke" class="on">Karaoke</button>
+        <button type="button" data-kind="instrumental">Instrumental</button>
+        <button type="button" data-kind="">Original</button>
+      </div>
+      <ul class="yt-results" id="ytResults" hidden></ul>
+      <div class="yt-manual" id="ytManual">
+        <div class="row">
+          <a class="btn" id="ytFind" target="_blank" rel="noopener">Find on YouTube ↗</a>
+          <button class="btn" type="button" id="ytPaste">Paste link</button>
+        </div>
+        <form class="row" id="ytForm">
+          <input id="ytUrl" type="url" inputmode="url" placeholder="Paste a YouTube link…" aria-label="YouTube link">
+          <button class="btn red" type="submit">Play</button>
+        </form>
+        <p class="mute small" id="ytKeyTip">Tip: add a free YouTube key in <button type="button" class="linkish" data-open="settings">Settings</button> to search YouTube right here.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- processing -->
+  <section id="processing" class="card processing" hidden>
+    <div class="eq"><i></i><i></i><i></i><i></i><i></i></div>
+    <h3 id="procTitle">Removing vocals…</h3>
+    <div class="meter"><div id="procBar"></div></div>
+    <p class="mute small" id="procNote">This happens on your device. Nothing is uploaded.</p>
+  </section>
+
+  <!-- player -->
+  <section id="player" hidden>
+    <div id="ytBox" class="yt-box" hidden><div id="ytPlayer"></div></div>
+    <div class="lyrics-wrap">
+      <div id="syncBanner" class="sync-banner" hidden>
+        <span><b>Fix timing:</b> tap a line the moment it's sung.</span>
+        <button type="button" class="pill small" id="syncDone">Done</button>
+      </div>
+      <div class="lyrics" id="lyrics" aria-live="off"></div>
+    </div>
+  </section>
+</main>
+
+<!-- player dock -->
+<div class="dock" id="dock" hidden>
+  <div class="seek">
+    <span id="tCur">0:00</span>
+    <input type="range" id="seek" min="0" max="1000" value="0" step="1" aria-label="Seek">
+    <span id="tDur">0:00</span>
+  </div>
+  <div class="dock-row">
+    <div class="transport">
+      <button class="icon-btn" id="back10" aria-label="Back 10 seconds">
+        <svg viewBox="0 0 24 24" width="24" height="24"><path d="M4 12a8 8 0 1 0 2.4-5.7M4 4v4h4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><text x="12" y="15.5" text-anchor="middle" font-size="7.5" font-weight="800" fill="currentColor" font-family="Inter,sans-serif">10</text></svg>
+      </button>
+      <button class="play" id="playBtn" aria-label="Play">
+        <svg class="i-play" viewBox="0 0 24 24" width="30" height="30"><path d="M7 4.5v15l13-7.5z" fill="currentColor"/></svg>
+        <svg class="i-pause" viewBox="0 0 24 24" width="30" height="30"><rect x="5.5" y="4.5" width="4.5" height="15" rx="1.2" fill="currentColor"/><rect x="14" y="4.5" width="4.5" height="15" rx="1.2" fill="currentColor"/></svg>
+      </button>
+      <button class="icon-btn" id="fwd10" aria-label="Forward 10 seconds">
+        <svg viewBox="0 0 24 24" width="24" height="24"><path d="M20 12a8 8 0 1 1-2.4-5.7M20 4v4h-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><text x="12" y="15.5" text-anchor="middle" font-size="7.5" font-weight="800" fill="currentColor" font-family="Inter,sans-serif">10</text></svg>
+      </button>
+    </div>
+    <div class="tv-btns">
+      <button class="btn red" id="tvModeBtn">
+        <svg viewBox="0 0 24 24" width="18" height="18"><rect x="2" y="4" width="20" height="13" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M8 21h8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        TV mode
+      </button>
+      <button class="btn" id="tvWinBtn" title="Open the lyrics in their own window (for a Mac using the TV as a second screen)">
+        <svg viewBox="0 0 24 24" width="18" height="18"><rect x="3" y="7" width="14" height="13" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M8 4h11a2 2 0 0 1 2 2v9" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        <span>TV window</span>
+      </button>
+    </div>
+  </div>
+  <div class="dock-row knobs">
+    <label class="knob" id="vocalKnob">
+      <span class="k-label">Vocals <b id="vocalVal">Off</b></span>
+      <input type="range" id="vocal" min="0" max="100" value="0" aria-label="Guide vocal level">
+    </label>
+    <div class="knob timing">
+      <span class="k-label">Lyrics timing <b id="offVal">0.0s</b></span>
+      <div class="nudge">
+        <button type="button" class="pill small" id="offMinus" title="Lyrics appear earlier">− Earlier</button>
+        <button type="button" class="pill small" id="offPlus" title="Lyrics appear later">Later +</button>
+        <button type="button" class="pill small hot" id="syncBtn">Fix</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== TV STAGE ========== -->
+<div id="tv" class="tv" hidden>
+  <div class="tv-bg" id="tvBg"></div>
+  <div class="tv-shade"></div>
+  <div class="tv-top">
+    <div class="tv-now"><span id="tvSong"></span><span class="mute" id="tvArtist"></span></div>
+  </div>
+  <div class="tv-stage" id="tvStage">
+    <div class="tv-line prev" id="tvPrev"></div>
+    <div class="tv-count" id="tvCount"><i></i><i></i><i></i></div>
+    <div class="tv-line cur" id="tvCur"></div>
+    <div class="tv-line next" id="tvNext"></div>
+    <div class="tv-line next2" id="tvNext2"></div>
+  </div>
+  <div class="tv-idle" id="tvIdle" hidden>
+    <div class="brand big">KARAOKE<span>.</span></div>
+    <p id="tvIdleMsg">Pick a song in the other window.</p>
+  </div>
+  <div class="tv-progress"><div id="tvProg"></div></div>
+  <div class="tv-hint" id="tvHint" hidden>Turn your phone sideways for a full-screen TV picture</div>
+  <div class="tv-controls" id="tvControls">
+    <button class="icon-btn" id="tvExit" aria-label="Exit TV mode">
+      <svg viewBox="0 0 24 24" width="24" height="24"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
+    </button>
+    <button class="icon-btn" id="tvBack" aria-label="Back 10 seconds">−10</button>
+    <button class="play" id="tvPlay" aria-label="Play or pause">
+      <svg class="i-play" viewBox="0 0 24 24" width="30" height="30"><path d="M7 4.5v15l13-7.5z" fill="currentColor"/></svg>
+      <svg class="i-pause" viewBox="0 0 24 24" width="30" height="30"><rect x="5.5" y="4.5" width="4.5" height="15" rx="1.2" fill="currentColor"/><rect x="14" y="4.5" width="4.5" height="15" rx="1.2" fill="currentColor"/></svg>
+    </button>
+    <button class="icon-btn" id="tvFwd" aria-label="Forward 10 seconds">+10</button>
+    <button class="icon-btn" id="tvFull" aria-label="Full screen">
+      <svg viewBox="0 0 24 24" width="22" height="22"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+  </div>
+</div>
+
+<!-- ========== SHEETS ========== -->
+<div class="sheet" id="tvHelp" hidden>
+  <div class="sheet-card" role="dialog" aria-labelledby="tvHelpTitle">
+    <button class="icon-btn sheet-x" data-close aria-label="Close"><svg viewBox="0 0 24 24" width="22" height="22"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></button>
+    <div class="eyebrow">AirPlay</div>
+    <h2 class="disp" id="tvHelpTitle">Put it on the TV</h2>
+    <p class="mute">Works with Apple TV and AirPlay TVs (Samsung, LG, Sony, Roku and others).</p>
+    <div class="seg" id="helpTabs">
+      <button type="button" data-tab="phone" class="on">iPhone / iPad</button>
+      <button type="button" data-tab="mac">Mac</button>
+      <button type="button" data-tab="other">Other TVs</button>
+    </div>
+    <ol class="steps" data-panel="phone">
+      <li>Pick your song and add the music.</li>
+      <li>Swipe down from the top-right corner to open <b>Control Center</b>, tap <b>Screen Mirroring</b> <span class="kbd">⧉</span>, and choose your TV.</li>
+      <li>Turn your phone <b>sideways</b> and tap <b>TV mode</b>. The sound comes out of the TV too.</li>
+      <li>Tap the screen any time to pause or skip.</li>
+      <li class="mute">Best on iPhone: tap Share → <b>Add to Home Screen</b> and open Karaoke from there. It runs full-screen with no browser bars.</li>
+    </ol>
+    <ol class="steps" data-panel="mac" hidden>
+      <li>Click <b>Control Center</b> in the menu bar → <b>Screen Mirroring</b> → choose your TV.</li>
+      <li>For lyrics only on the TV, choose <b>Use As Separate Display</b>, then click <b>TV window</b> in the player, drag that window onto the TV and click it to go full-screen. Your controls stay on the laptop.</li>
+      <li>Or just mirror your screen and press <b>TV mode</b>.</li>
+      <li class="mute">Keyboard: Space play/pause · ← → skip 5s · [ ] nudge lyrics · Esc exit TV mode.</li>
+    </ol>
+    <ol class="steps" data-panel="other" hidden>
+      <li><b>Chromecast / Google TV:</b> open this page in Chrome → ⋮ menu → <b>Cast…</b> → <b>Cast tab</b>, then press <b>TV mode</b>.</li>
+      <li><b>HDMI cable:</b> plug your laptop into the TV and press <b>TV mode</b>.</li>
+      <li><b>Smart-TV web browser:</b> open this page on the TV itself and use a YouTube karaoke version.</li>
+    </ol>
+  </div>
+</div>
+
+<div class="sheet" id="settings" hidden>
+  <div class="sheet-card" role="dialog" aria-labelledby="setTitle">
+    <button class="icon-btn sheet-x" data-close aria-label="Close"><svg viewBox="0 0 24 24" width="22" height="22"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></button>
+    <h2 class="disp" id="setTitle">Settings</h2>
+
+    <h3 class="label">Vocal removal strength</h3>
+    <div class="seg" id="strengthSeg">
+      <button type="button" data-v="0.6">Gentle</button>
+      <button type="button" data-v="0.85" class="on">Normal</button>
+      <button type="button" data-v="1">Max</button>
+    </div>
+    <p class="mute small">Gentle keeps more of the band. Max removes more voice but can thin out drums and bass. Applies to the next song you load.</p>
+
+    <h3 class="label">YouTube search (optional)</h3>
+    <form class="row" id="keyForm">
+      <input id="ytKey" type="text" placeholder="YouTube Data API key" autocomplete="off" spellcheck="false">
+      <button class="btn red" type="submit">Save</button>
+    </form>
+    <details class="mute small">
+      <summary>How to get a free key (2 minutes)</summary>
+      <ol>
+        <li>Go to <a href="https://console.cloud.google.com/apis/library/youtube.googleapis.com" target="_blank" rel="noopener">console.cloud.google.com</a> and sign in with Google.</li>
+        <li>Create a project (any name) and press <b>Enable</b> on “YouTube Data API v3”.</li>
+        <li>Open <b>Credentials</b> → <b>Create credentials</b> → <b>API key</b>, copy it and paste it here.</li>
+      </ol>
+      <p>The key is stored only in this browser. It gives about 100 searches a day for free.</p>
+    </details>
+
+    <h3 class="label">My songs</h3>
+    <button class="btn" type="button" id="clearLib">Delete all saved songs</button>
+  </div>
+</div>
+
+<div class="drop-overlay" id="dropOverlay" hidden><div>Drop the song file to load it</div></div>
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+<audio id="previewAudio" preload="none"></audio>
+
+<script src="karaoke.js?v=1"></script>
+</body>
+</html>
